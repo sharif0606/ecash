@@ -1,0 +1,7 @@
+/source/vendor
+/source/.env
+/source/public/storage
+/source/.phpunit.result.cache
+/source/.idea
+/source/.vscode
+/source/storage/*.key
