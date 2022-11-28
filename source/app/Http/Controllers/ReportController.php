@@ -13,6 +13,28 @@ use Carbon\Carbon;
 
 class ReportController extends Controller
 {
+	public function stockBatch(Request $request){
+        $allProduct = Product::select("id","name")->orderBy('id', 'DESC')->get();
+		
+		$where['stocks.companyId']=company()['companyId'];
+		if(isset($_GET['product']) && $_GET['product'])
+			$where['stocks.productId']=$_GET['product'];
+		
+		$end = $request->todate?$request->todate:date("Y-m-d");
+		$start= $request->fromdate?$request->fromdate:date("Y-m-d",strtotime ( '-365 days' , strtotime ( $end ) ));
+		
+		$batchWiseReport = DB::table('stocks')
+						->join('products', 'stocks.productId',  '=','products.id')
+						->select('products.name', 'stocks.batchId','stocks.sellPrice','stocks.buyPrice', 'stocks.stock')
+						->where($where)
+						->whereBetween('stocks.created_at', [$start, $end])
+						->orderBy('products.name')
+						->orderBy('stocks.batchId')
+						->get();
+						
+		return view('report.stock_batch_report', compact('batchWiseReport','allProduct'));
+    }
+	
     public function index(){
 		$where['companyId']=company()['companyId'];
 		
@@ -98,41 +120,7 @@ class ReportController extends Controller
 		return view('report.allSaleReportSummary', compact('todaySellSummary', 'yesterdaySellSummary', 'weeklySellSummary', 'monthlySellSummary'));
 	}
     
-	public function batchWiseReport(){
-        $allSupplier = Supplier::select("id","name")->orderBy('id', 'DESC')->get();
-        $allProduct = Product::select("id","brandName")->orderBy('id', 'DESC')->get();
-		
-		$where['medicine_stocks.companyId']=company()['companyId'];
-		if(isset($_GET['product']) && $_GET['product']){
-			$where['medicine_stocks.productId']=$_GET['product'];
-		}
-		if(isset($_GET['supplier']) && $_GET['supplier']){
-			$where['purchases.sup_id']=$_GET['supplier'];
-		}
-		
-		if(isset($_GET['dateQuery']) && $_GET['dateQuery']){
-			$dateQ 	= explode('-',$_GET['dateQuery']);
-			$start 	=date("Y-m-d",strtotime(str_replace('/', '-', $dateQ[0])));
-			$end 	=date("Y-m-d",strtotime(str_replace('/', '-', $dateQ[1])));
-		}else{
-			$start = date("Y-m-d");
-			$end = date("Y-m-d",strtotime ( '+29 days' , strtotime ( $start ) ));
-		}
-			
-		$batchWiseReport = DB::table('medicine_stocks')
-						->join('purchase_items', 'medicine_stocks.batchId', '=', 'purchase_items.batchId')
-						->join('products', 'medicine_stocks.productId',  '=','products.id')
-						->join('purchases', 'purchase_items.purchase_no', '=', 'purchases.id')
-						->join('suppliers', 'purchases.sup_id', '=', 'suppliers.id')
-						->select('products.brandName', 'medicine_stocks.batchId', 'medicine_stocks.expiryDate', 'medicine_stocks.manufDate', 'suppliers.name', \DB::raw('sum(medicine_stocks.stock) as stock'))
-						->where($where)
-						->whereBetween('medicine_stocks.expiryDate', [$start, $end])
-						->groupBy('medicine_stocks.batchId')
-						->paginate(25);
-		
-		
-		return view('report.batch_wise_report', compact('batchWiseReport','allSupplier','allProduct'));
-    }
+	
     
 	public function batchWiseProfit(){
         $allProduct = Product::select("id","brandName")->orderBy('id', 'DESC')->get();

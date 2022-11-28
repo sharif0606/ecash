@@ -27,8 +27,8 @@
 						<div class="breadcrumb-wrapper">
 							<ol class="breadcrumb">
 								<li class="breadcrumb-item"><a href="{{route(currentUser().'Dashboard')}}">{{ encryptor('decrypt', Session::get('username')) }}</a></li>
-								<li class="breadcrumb-item"><a href="#">Import Product</a></li>
-								<li class="breadcrumb-item active">List</li>
+								<li class="breadcrumb-item"><a href="#">Product</a></li>
+								<li class="breadcrumb-item active">Label</li>
 							</ol>
 						</div>
 					</div>
@@ -42,7 +42,7 @@
 					<div class="card">
 						<div class="card-header">
 							<h4 class="card-title">
-								All Product List Here to barcode...
+								All Product List Here to Generate Label...
 							</h4>
 						</div>
 						<div class="card-body">
@@ -50,9 +50,8 @@
 								<div class="row">
 									<div class="col-12 col-sm-8">
 										<!--begin: Search Form-->
-										<form method="GET" action="{{route(currentUser().'.productlistbarcode')}}" class="kt-form kt-form--fit mb-15">
+										<form method="GET" action="{{route(currentUser().'.productlistlabel')}}" class="kt-form kt-form--fit mb-15">
 											<div class="row mb-2">
-												
 												<div class="col-lg-6 mb-lg-0 mb-6">
 													<label>Name:</label>
 													<input type="text" class="form-control" name="name" value="@if(Session::get('name')){{Session::get('name')}}@endif">
@@ -64,7 +63,7 @@
 															<span>Search</span>
 														</span>
 													</button>&#160;&#160;
-													<a href="{{route(currentUser().'.productlistbarcode')}}?fresh=1" class="btn btn-secondary btn-secondary--icon" id="kt_reset">
+													<a href="{{route(currentUser().'.productlistlabel')}}?fresh=1" class="btn btn-secondary btn-secondary-icon" id="kt_reset">
 														<span>
 															<i class="la la-close"></i>
 															<span>Reset</span>
@@ -76,12 +75,12 @@
 											
 										<div class="table-responsive">
                                     		<!--begin: Datatable-->
-											<a href="javascript:void(0)" onclick="import_medi('a4')" class="mr-2 btn btn-outline-info"><i class="ficon" data-feather="align-justify"></i> A4</a>
-                                    		<a href="javascript:void(0)" onclick="import_medi('single')" class="mr-2 btn btn-outline-info"><i class="ficon" data-feather="align-justify"></i> Single</a>
-											<table id="myTable" class="table table-striped text-center table-bordered dt-responsive dataTable">
+											<a href="javascript:void(0)" onclick="barcode_preview()" class="mr-2 btn btn-outline-info"><i class="fa fa-barcode"></i> Barcode</a>
+                                    		<a href="javascript:void(0)" onclick="qrcode_preview()" class="mr-2 btn btn-outline-info"><i class="fa fa-qrcode"></i> Qrcode</a>
+											<table class="my-1 table table-striped text-center table-bordered dt-responsive">
                                     			<thead class="thead-light">
                                     				<tr>
-                                    					<th>Sr</th>
+                                    					<th> <label for="checkall"> <input type="checkbox" name="" class="checkall" value="1"> </label></th>
                                     					<th>Name</th>
                                     					<th>Sell Price</th>
                                     				</tr>
@@ -103,7 +102,7 @@
 											</div>
 										</div>
                                 	</div>
-									<div class="col-12 col-sm-4 barcodedata">
+									<div class="col-12 col-sm-4 barcodedata" style="max-height:1200px; overflow:auto">
 
 									</div>
                                 </div>
@@ -111,37 +110,90 @@
 						</div>
 					</div>
 				</div>
-				
 			</div>
-		</div>
-		<!-- Responsive tables end -->
+		</div><!-- Responsive tables end -->
 	</div>
-</div>
-<!--end::Card-->
+</div><!--end::Card-->
 @endsection
 
 @push('scripts')
 <script>
-	function import_medi(size){
+	function barcode_preview(){
 		var get_data=new Array();
 		$('.get_data').each(function(){
 			if($(this).is(":checked"))
 				get_data.push($(this).val());
-		})
-    		$.ajax({
-        		'url': '{{route(currentUser().'.barcodeprintpreview')}}',
-        		'type': 'GET',
-				'dataType' : 'json',
-        		'data': {datas:get_data},
-        		success: function(response){ // What to do if we succeed
-        		
-        			console.log(response);
-					$('.barcodedata').html(response);
-        		},
-        		error: function(response){
-        			console.log(response);
-        		}
-        	});
+		});
+
+		var checkall=$('.checkall').is(":checked")?1:0;
+		$.ajax({
+			'url': '{{route(currentUser().'.barcodeprintpreview')}}',
+			'type': 'GET',
+			'dataType' : 'json',
+			'data': {datas:get_data,checkall:checkall},
+			success: function(response){ // What to do if we succeed
+			
+				console.log(response);
+				$('.barcodedata').html(response);
+			},
+			error: function(response){
+				console.log(response);
+			}
+		});
+	}
+	function qrcode_preview(){
+		var get_data=new Array();
+		$('.get_data').each(function(){
+			if($(this).is(":checked"))
+				get_data.push($(this).val());
+		});
+
+		var checkall=$('.checkall').is(":checked")?1:0;
+		$.ajax({
+			'url': '{{route(currentUser().'.qrcodeprintpreview')}}',
+			'type': 'GET',
+			'dataType' : 'json',
+			'data': {datas:get_data,checkall:checkall},
+			success: function(response){ // What to do if we succeed
+			
+				console.log(response);
+				$('.barcodedata').html(response);
+			},
+			error: function(response){
+				console.log(response);
+			}
+		});
+	}
+
+	function print_label(ptype,ltype){
+		var get_data=new Array();
+		$('.get_data').each(function(){
+			if($(this).is(":checked"))
+				get_data.push($(this).val());
+		});
+
+		var checkall=$('.checkall').is(":checked")?1:0;
+		$.ajax({
+			'url': '{{route(currentUser().'.labelprint')}}',
+			'type': 'GET',
+			'dataType' : 'json',
+			'data': {datas:get_data,checkall:checkall,ptype:ptype,ltype:ltype},
+			success: function(response){ // What to do if we succeed
+				var divContents = response;
+				var a = window.open('', '', 'height=700, width=800');
+				a.document.write('<html>');
+				a.document.write('<body >');
+				a.document.write(divContents);
+				a.document.write('</body></html>');
+				a.document.close();
+				a.onload=function(){
+					a.print();
+				};
+			},
+			error: function(response){
+				console.log(response);
+			}
+		});
 	}
 </script>
 @endpush

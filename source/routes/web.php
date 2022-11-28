@@ -370,8 +370,10 @@ Route::group(['middleware' => 'isOwner'], function(){
             
             Route::get('/import_product', 'ProductController@importProductList')->name('owner.importProductList');
             Route::get('/import', 'ProductController@importProduct')->name('owner.importProduct');
-            Route::get('/barcodegenerate', 'ProductController@productForBarcode')->name('owner.productlistbarcode');
+            Route::get('/generatelabel', 'ProductController@productForLabel')->name('owner.productlistlabel');
             Route::get('/barcodeprintpreview', 'ProductController@barcodePrintPreview')->name('owner.barcodeprintpreview');
+            Route::get('/labelprint', 'ProductController@labelPrint')->name('owner.labelprint');
+            Route::get('/qrcodeprintpreview', 'ProductController@qrcodePrintPreview')->name('owner.qrcodeprintpreview');
         });
 
         Route::prefix('company')->group(function () {
@@ -485,10 +487,10 @@ Route::group(['middleware' => 'isOwner'], function(){
         });
         
         Route::prefix('report')->group(function () {
+            Route::get('/stock/batch', 'ReportController@stockBatch')->name('owner.StockBatch');
             Route::get('/all', 'ReportController@index')->name('owner.allMedicineExpairy');
             Route::get('/all/purchase/report', 'ReportController@allpurchaseReport')->name('owner.allPurchaseReport');
             Route::get('/all/sale/report', 'ReportController@allsaleReport')->name('owner.allSaleReport');
-            Route::get('/all/batch/report', 'ReportController@batchWiseReport')->name('owner.allbatchWiseReport');
             Route::get('/all/batch/profit', 'ReportController@batchWiseProfit')->name('owner.allbatchWiseProfit');
             Route::get('/all/sell/report/summary', 'ReportController@allSellReportSummary')->name('owner.allSellReportSummary');
         });
@@ -624,15 +626,7 @@ Route::group(['middleware' => 'isSalesManager'], function(){
             Route::post('/update', 'ServiceController@update')->name('salesmanager.updateService');
         });
         
-         Route::prefix('appointment')->group(function () {
-            Route::get('/all', 'AppointmentController@index')->name('salesmanager.allAppointment');
-            Route::get('/add', 'AppointmentController@addForm')->name('salesmanager.addNewAppointmentForm');
-            Route::post('/add', 'AppointmentController@store')->name('salesmanager.addNewAppointment');
-            Route::get('/edit/{id}', 'AppointmentController@editForm')->name('salesmanager.editAppointment');
-            Route::post('/update', 'AppointmentController@update')->name('salesmanager.updateAppointment');
-            Route::get('/delete/{name}/{id}', 'AppointmentController@delete')->name('salesmanager.deleteAppointment');
-            Route::get('/change_status', 'AppointmentController@changeStatus')->name('salesmanager.changeStatusAppo');
-        });
+        
         
         Route::prefix('stock')->group(function () {
             Route::get('/all', 'StockConroller@index')->name('salesmanager.allStockM');
@@ -640,6 +634,7 @@ Route::group(['middleware' => 'isSalesManager'], function(){
         });
         
         Route::prefix('report')->group(function () {
+            Route::get('/stock/batch', 'ReportController@stockBatch')->name('salesmanager.StockBatch');
             Route::get('/all', 'ReportController@index')->name('salesmanager.allMedicineExpairy');
             Route::get('/all/purchase/report', 'ReportController@allpurchaseReport')->name('salesmanager.allPurchaseReport');
             Route::get('/all/sale/report', 'ReportController@allsaleReport')->name('salesmanager.allSaleReport');
@@ -756,14 +751,6 @@ Route::group(['middleware' => 'isSalesMan'], function(){
             Route::get('/search-due-customer', 'BillController@searchDueCustomerForm')->name('salesman.searchDueCustomerForm');
             Route::post('/due-customer', 'BillController@searchDueCustomer')->name('salesman.searchDueCustomer');
             Route::post('/due-pay', 'BillController@payDue')->name('salesman.payDue');
-        });
-        Route::prefix('appointment')->group(function () {
-            Route::get('/all', 'AppointmentController@index')->name('salesman.allAppointment');
-            Route::get('/add', 'AppointmentController@addForm')->name('salesman.addNewAppointmentForm');
-            Route::post('/add', 'AppointmentController@store')->name('salesman.addNewAppointment');
-            Route::get('/edit/{id}', 'AppointmentController@editForm')->name('salesman.editAppointment');
-            Route::post('/update', 'AppointmentController@update')->name('salesman.updateAppointment');
-            Route::get('/delete/{name}/{id}', 'AppointmentController@delete')->name('salesman.deleteAppointment');
         });
         
         Route::prefix('stock')->group(function () {

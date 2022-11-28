@@ -19,6 +19,7 @@ use Exception;
 use Carbon\Carbon;
 use DB;
 use DNS1D;
+use DNS2D;
 
 class ProductController extends Controller
 {
@@ -206,12 +207,13 @@ class ProductController extends Controller
 
     }
 
-    public function productForBarcode(Request $request){
+    public function productForLabel(Request $request){
         /* remove all search element */
-		if(isset($_GET['fresh']) && $_GET['fresh']){
+		if(isset($_GET['fresh']) && $_GET['fresh'])
 		    $request->session()->forget('name');
-		}
+		
 		$where['products.status']=1;
+
 		if(company()['companyId']){
 			$where['products.companyId']=company()['companyId'];
 			$company_id=company()['companyId'];
@@ -229,44 +231,137 @@ class ProductController extends Controller
         $productlist = $productlist->rightJoin('stocks', 'products.id', '=', 'stocks.productId')
         ->select('products.id','products.name','stocks.sellPrice','stocks.batchId','stocks.stock');
 		
-        $productlist = $productlist->orderBy('products.name', 'ASC')->paginate(25);
+        $productlist = $productlist->where('stocks.stock','>','0')->orderBy('products.name', 'ASC')->paginate(25);
 			
-        return view('product.productlistbarcode', compact('productlist'));
+        return view('product.productlistlabel', compact('productlist'));
     }
     public function barcodePrintPreview(Request $request){
+        $company_id=company()['companyId'];
+        if($request->checkall)
+            $productlist=DB::select("SELECT p.id,p.name,stocks.sellPrice,stocks.batchId,stocks.stock FROM `products` as p JOIN stocks on stocks.productId=p.id where p.companyId=$company_id order by p.name");
+        else
+            $productlist=DB::select("SELECT p.id,p.name,stocks.sellPrice,stocks.batchId,stocks.stock FROM `products` as p JOIN stocks on stocks.productId=p.id WHERE p.id in (".implode(',',$request->datas).") order by p.name");
         
-        $productlist=DB::select("SELECT p.id,p.name,stocks.sellPrice,stocks.batchId,stocks.stock FROM `products` as p JOIN stocks on stocks.productId=p.id WHERE p.id in (".implode(',',$request->datas).")");//Product::whereIn('id',$request->datas)->get();
         $barcode="<div class='row'>";
+        $barcode.='<div class="text-center"><button type="button" class="btn btn-primary" onclick="print_label('.'\'a4\','.'\'barcode\''.')"><i class="fas fa-print"></i> A4</button>';
+        $barcode.='<button type="button" class="ms-2 btn btn-primary" onclick="print_label('.'\'single\','.'\'barcode\''.')"><i class="fas fa-print"></i> Single</button></div>';
 		if($productlist){
             foreach($productlist as $ps){
-                $barcode.="<div class='col-6 text-center px-1 py-1'>";
-                $barcode.="<div class='fw-bold text-dark'>$ps->name</div>";
-                $barcode.="<div class='fw-bold fs-4'>$ps->sellPrice</div>";
-                $barcode.="<div class='text-center'>".DNS1D::getBarcodeHTML("$ps->id-$ps->batchId", 'C128',1,25)."</div>";
-                $barcode.="<div class='text-center'>$ps->id-$ps->batchId</div>";
-                $barcode.="</div>";
+                for($i=0; $i<$ps->stock;$i++){
+                    $barcode.="<div class='col-6 text-center px-1 py-1'>";
+                    $barcode.="<div class='fw-bold text-dark'>$ps->name</div>";
+                    $barcode.="<div class='fw-bold fs-4'>$ps->sellPrice</div>";
+                    $barcode.="<div class='text-center'>".DNS1D::getBarcodeHTML("$ps->batchId", 'C128',1,25)."</div>";
+                    $barcode.="<div class='text-center'>$ps->batchId</div>";
+                    $barcode.="</div>";
+                }
             }
         }
 		$barcode.="</div>";
         echo json_encode($barcode);
     }
 
-    public function barcodePrint(Request $request){
+    public function qrcodePrintPreview(Request $request){
+        $company_id=company()['companyId'];
+        if($request->checkall)
+            $productlist=DB::select("SELECT p.id,p.name,stocks.sellPrice,stocks.batchId,stocks.stock FROM `products` as p JOIN stocks on stocks.productId=p.id where p.companyId=$company_id order by p.name");
+        else
+            $productlist=DB::select("SELECT p.id,p.name,stocks.sellPrice,stocks.batchId,stocks.stock FROM `products` as p JOIN stocks on stocks.productId=p.id WHERE p.id in (".implode(',',$request->datas).") order by p.name");
         
-        $productlist=DB::select("SELECT p.id,p.name,stocks.sellPrice,stocks.batchId,stocks.stock FROM `products` as p JOIN stocks on stocks.productId=p.id WHERE p.id in (".implode(',',$request->datas).")");//Product::whereIn('id',$request->datas)->get();
         $barcode="<div class='row'>";
+        $barcode.='<div class="text-center"><button type="button" class="btn btn-primary" onclick="print_label('.'\'a4\','.'\'qrcode\''.')"><i class="fas fa-print"></i> A4</button>';
+        $barcode.='<button type="button" class="ms-2 btn btn-primary" onclick="print_label('.'\'single\','.'\'qrcode\''.')"><i class="fas fa-print"></i> Single</button></div>';
+        
 		if($productlist){
             foreach($productlist as $ps){
-                $barcode.="<div class='col-6 text-center px-1 py-1'>";
-                $barcode.="<div class='fw-bold text-dark'>$ps->name</div>";
-                $barcode.="<div class='fw-bold fs-4'>$ps->sellPrice</div>";
-                $barcode.="<div class='text-center'>".DNS1D::getBarcodeHTML("$ps->id-$ps->batchId", 'C128',1,25)."</div>";
-                $barcode.="<div class='text-center'>$ps->id-$ps->batchId</div>";
-                $barcode.="</div>";
+                for($i=0; $i<$ps->stock;$i++){
+                    $barcode.="<div class='col-6 text-center px-1 py-1'>";
+                    $barcode.="<div class='fw-bold text-dark'>$ps->name</div>";
+                    $barcode.="<div class='fw-bold fs-4'>$ps->sellPrice</div>";
+                    $barcode.="<div class='text-center w-100'>".DNS2D::getBarcodeHTML("$ps->batchId", 'QRCODE',7,6)."</div>";
+                    $barcode.="<div class='text-center'>$ps->batchId</div>";
+                    $barcode.="</div>";
+                }
             }
         }
 		$barcode.="</div>";
         echo json_encode($barcode);
     }
+
+    public function labelPrint(Request $request){
+        $company_id=company()['companyId'];
+        if($request->checkall)
+            $productlist=DB::select("SELECT p.id,p.name,stocks.sellPrice,stocks.batchId,stocks.stock FROM `products` as p JOIN stocks on stocks.productId=p.id where p.companyId=$company_id order by p.name");
+        else
+            $productlist=DB::select("SELECT p.id,p.name,stocks.sellPrice,stocks.batchId,stocks.stock FROM `products` as p JOIN stocks on stocks.productId=p.id WHERE p.id in (".implode(',',$request->datas).") order by p.name");
+        
+        if($request->ptype=="a4" && $request->ltype=="barcode"){
+            $barcode="<div>";
+            if($productlist){
+                foreach($productlist as $ps){
+                    for($i=0; $i<$ps->stock;$i++){
+                        $barcode.="<div style='page-break-inside: avoid;width:150px; height:122px; float:left;text-align:center;padding:10px;'>";
+                        $barcode.="<div style='font-weight:bold'>$ps->name</div>";
+                        $barcode.="<div style='font-weight:bold;font-size:26px;'>$ps->sellPrice</div>";
+                        $barcode.="<center style='text-align:center'>"."<img width='100%' src='data:image/png;base64," . DNS1D::getBarcodePNG("$ps->batchId", 'C128') . "' alt='barcode'   /></center>";
+                        $barcode.="<div style='text-align:center'>$ps->batchId</div>";
+                        $barcode.="</div>";
+                    }
+                }
+            }
+            $barcode.="</div>";
+            
+        }else if($request->ptype=="single" && $request->ltype=="barcode"){
+            $barcode="<div>";
+            if($productlist){
+                foreach($productlist as $ps){
+                    for($i=0; $i<$ps->stock;$i++){
+                        $barcode.="<div style='page-break-inside: avoid;width:100%; height:122px; text-align:center;padding:10px;'>";
+                        $barcode.="<div style='font-weight:bold'>$ps->name</div>";
+                        $barcode.="<div style='font-weight:bold;font-size:26px;'>$ps->sellPrice</div>";
+                        $barcode.="<center style='text-align:center'>"."<img style='max-width:90%; width:auto' src='data:image/png;base64," . DNS1D::getBarcodePNG("$ps->batchId", 'C128') . "' alt='barcode'   /></center>";
+                        $barcode.="<div style='text-align:center'>$ps->batchId</div>";
+                        $barcode.="</div>";
+                    }
+                }
+            }
+            $barcode.="</div>";
+        }else if($request->ptype=="a4" && $request->ltype=="qrcode"){
+            $i=0;
+            $barcode="<div style='display: flex;flex-wrap: wrap;'>";
+            if($productlist){
+                foreach($productlist as $i=>$ps){
+                    for($i=0; $i<$ps->stock;$i++){
+                        $barcode.="<div style='page-break-inside: avoid;width:0.5in; height:1.5in; flex: 1 0 14%;text-align:center;padding:10px;'>";
+                        $barcode.="<div style='font-weight:bold;font-size:16px;'>$i $ps->name</div>";
+                        $barcode.="<div style='font-size:22px;'>$ps->sellPrice</div>";
+                        $barcode.="<center style='text-align:center'>"."<img style='max-width:90%; width:auto' src='data:image/png;base64," . DNS2D::getBarcodePNG("$ps->batchId", 'QRCODE',5,4) . "' alt='barcode'   /></center>";
+                        $barcode.="<div style='text-align:center'>$ps->batchId</div>";
+                        $barcode.="</div>";
+                    }
+                }
+            }
+            $barcode.="</div>";
+            
+        }else if($request->ptype=="single" && $request->ltype=="qrcode"){
+            $barcode="<div>";
+            if($productlist){
+                foreach($productlist as $ps){
+                    for($i=0; $i<$ps->stock;$i++){
+                        $barcode.="<div style='page-break-inside: avoid;margin-top:15px;width:100%; height:122px; text-align:center;padding:10px;'>";
+                        $barcode.="<div style='font-weight:bold;font-size:16px;'>$i $ps->name</div>";
+                        $barcode.="<div style='font-size:22px;'>$ps->sellPrice</div>";
+                        $barcode.="<center style='text-align:center'>"."<img style='max-width:90%; width:auto' src='data:image/png;base64," . DNS2D::getBarcodePNG("$ps->batchId", 'QRCODE',5,4) . "' alt='barcode'   /></center>";
+                        $barcode.="<div style='text-align:center'>$ps->batchId</div>";
+                        $barcode.="</div>";
+                    }
+                }
+            }
+            $barcode.="</div>";
+        }
+
+        echo json_encode($barcode);
+    }
+
 	
 }

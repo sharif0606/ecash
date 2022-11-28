@@ -10,6 +10,7 @@
 	.select2-container--default .select2-selection--single .select2-selection__arrow b {
     border-width: 0 0px 0 0;
 	}
+	
 	.pr-0{
 		padding-right: 0 !important;
 	}
@@ -93,7 +94,7 @@
 									<div class="row product_row">
 										<div class="col-12 d-flex product-details-border position-relative pe-0">
 											<div class="row w-100 pe-lg-0 pe-1 py-2">
-												<div class="col-lg-6 col-12 mb-lg-0 mb-2 mt-lg-0 mt-2">
+												<div class="col-lg-6 col-12 mb-lg-0 mb-2 mt-lg-0 mt-2  item-select2">
 													<p class="card-text col-title mb-md-50 mb-0">Item</p>
 													<select class="form-select item-details" name="product_id" required>
 														<option value="" selected>Select Product</option>
@@ -391,6 +392,10 @@ function check_term(e){
 	}
 }
 $(function () {
+	$('.item-details').select2({
+	placeholder: 'Select Product'
+});
+
 	'use strict';
   var data_list={
 	  @if($allCustomer)
@@ -536,6 +541,10 @@ $(function () {
 	  sourceItem.repeater({
 		show: function () {
 		  $(this).slideDown();
+		  $(".item-select2 span").data("select2-id", "2").hide();
+		  $('.item-details').select2({
+				placeholder: 'Select Product'
+			});
 		},
 		hide: function (e) {
 		  $(this).slideUp();
@@ -566,20 +575,20 @@ $(function () {
 	  if ($this.next('select').length) {
 		$this.next('select').html(value);
 	  } else {
-		$this.after('<select class="form-control mt-2" rows="2" name="batchId" onchange="setPrice(this.value,this)">' + value + '</select>');
+		$this.parent().append('<select class="form-control mt-2" rows="2" name="batchId" onchange="setPrice(this.value,this)">' + value + '</select>');
 	  }
 	});
 	if (btnAddNewItem.length) {
-	  btnAddNewItem.on('click', function () {
-		if (feather) {
-		  // featherSVG();
-		  feather.replace({ width: 14, height: 14 });
-		}
-		var tooltipTriggerList = [].slice.call(document.querySelectorAll('[data-bs-toggle="tooltip"]'));
-		var tooltipList = tooltipTriggerList.map(function (tooltipTriggerEl) {
-		  return new bootstrap.Tooltip(tooltipTriggerEl);
-		});
-	  });
+	  	btnAddNewItem.on('click', function () {
+			if (feather) {
+			// featherSVG();
+			feather.replace({ width: 14, height: 14 });
+			}
+			var tooltipTriggerList = [].slice.call(document.querySelectorAll('[data-bs-toggle="tooltip"]'));
+			var tooltipList = tooltipTriggerList.map(function (tooltipTriggerEl) {
+			return new bootstrap.Tooltip(tooltipTriggerEl);
+			});
+	  	});
 	}
 
 	if (applyChangesBtn.length) {
@@ -754,6 +763,8 @@ function cal_final_change(predefinedamount=""){
 		$('.total_change').css('color','black');
     }
 }
+
+
 </script>
 
 @endpush

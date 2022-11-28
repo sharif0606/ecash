@@ -25,6 +25,8 @@
     <link rel="stylesheet" type="text/css" href="{{asset('/')}}assets/vendors/css/tables/datatable/dataTables.bootstrap5.min.css">
     <link rel="stylesheet" type="text/css" href="{{asset('/')}}assets/vendors/css/tables/datatable/responsive.bootstrap4.min.css">
     <link rel="stylesheet" type="text/css" href="{{asset('/')}}assets/vendors/css/file-uploaders/dropzone.min.css">
+
+    <link rel="stylesheet" type="text/css" href="{{asset('/')}}assets/fonts/font-awesome/css/font-awesome.min.css">
     <!-- END: Vendor CSS-->
 
     <!-- BEGIN: Theme CSS-->
@@ -207,9 +209,9 @@
                       <i data-feather="circle"></i><span class="menu-item text-truncate" data-i18n="List">Category</span>
                     </a>
                   </li>
-                  <li class="{{menuActive(currentUser().'.productlistbarcode')}}">
-                    <a class="d-flex align-items-center" href="@if(currentUser() == 'owner' || currentUser() == 'salesmanager') {{route(currentUser().'.productlistbarcode')}} @endif">
-                      <i data-feather="circle"></i><span class="menu-item text-truncate" data-i18n="List">Generate Barcode</span>
+                  <li class="{{menuActive(currentUser().'.productlistlabel')}}">
+                    <a class="d-flex align-items-center" href="@if(currentUser() == 'owner' || currentUser() == 'salesmanager') {{route(currentUser().'.productlistlabel')}} @endif">
+                      <i data-feather="circle"></i><span class="menu-item text-truncate" data-i18n="List">Generate Label</span>
                     </a>
                   </li>
                 </ul>
@@ -289,6 +291,18 @@
                 <i data-feather="tv"></i>
                 <span class="menu-title text-truncate" data-i18n="User">Warrenty</span>
               </a>
+            </li>
+          @endif
+
+          @if(currentUser() == 'owner' || currentUser() == 'salesmanager')
+            <li class="nav-item {{menuActive(currentUser().'.*',3)}}"><a class="d-flex align-items-center" href="javascript:void(0)"><i data-feather="tv"></i><span class="menu-title text-truncate" data-i18n="Employees">Report</span></a>
+              <ul class="menu-content">
+                  <li class="{{menuActive(currentUser().'.StockBatch')}}">
+                    <a class="d-flex align-items-center" href="@if(currentUser() == 'owner' || currentUser() == 'salesmanager') {{route(currentUser().'.StockBatch')}} @endif">
+                      <i data-feather="circle"></i><span class="menu-item text-truncate" data-i18n="List">Stock Report</span>
+                    </a>
+                  </li>
+                </ul>
             </li>
           @endif
 
