@@ -39,45 +39,86 @@ class BillController extends Controller
         View::share('allZone', $allZone);
     }
 
-    public function index(){
+    public function index(Request $request){
+
 		if(currentUser()=="salesman"){
         	$u=encryptor('decrypt', request()->session()->get('user'));
-			$allBill = Bill::where(company())->where(branch())->where('userId',$u)->whereIn('status',[1,2])->orderBy('id', 'DESC')->paginate(25);
+			$allBill = Bill::where(company())->where(branch())->where('userId',$u)->whereIn('status',[1,2]);
 		}
 		elseif(currentUser()=="salesmanager"){
-			$allBill = Bill::where(company())->where(branch())->whereIn('status',[1,2])->orderBy('id', 'DESC')->paginate(25);
+			$allBill = Bill::where(company())->where(branch())->whereIn('status',[1,2]);
 		}
 		else{
-			$allBill = Bill::where(company())->whereIn('status',[1,2])->orderBy('id', 'DESC')->paginate(25);
+			$allBill = Bill::where(company())->whereIn('status',[1,2]);
 		}
+		if($request->fromdate){
+			$end = $request->todate?$request->todate:date('Y-m-d');
+			$start= $request->fromdate?$request->fromdate:date('Y-m-d');
+			$allBill = $allBill->whereBetween('bill_date', [$start, $end]);
+		}
+		if($request->customer_contact){
+			$customer_id=Customer::where(company())->where('custCode', $request->customer_contact)->pluck('id');
+			$allBill = $allBill->where('customer_id', $customer_id);
+		}
+		
+		
+		$allBill = $allBill->orderBy('id', 'DESC')->paginate(25);
         return view('bill.index', compact('allBill'));
     }
 
-    public function replaceAll(){
+    public function replaceAll(Request $request){
 		if(currentUser()=="salesman"){
         	$u=encryptor('decrypt', request()->session()->get('user'));
-			$allBill = Bill::where(company())->where(branch())->where('userId',$u)->whereIn('status',[5])->orderBy('id', 'DESC')->paginate(25);
+			$allBill = Bill::where(company())->where(branch())->where('userId',$u)->whereIn('status',[5]);
 		}
 		elseif(currentUser()=="salesmanager"){
-			$allBill = Bill::where(company())->where(branch())->whereIn('status',[5])->orderBy('id', 'DESC')->paginate(25);
+			$allBill = Bill::where(company())->where(branch())->whereIn('status',[5]);
 		}
 		else{
-			$allBill = Bill::where(company())->whereIn('status',[5])->orderBy('id', 'DESC')->paginate(25);
+			$allBill = Bill::where(company())->whereIn('status',[5]);
 		}
+
+		if($request->fromdate){
+			$end = $request->todate?$request->todate:date('Y-m-d');
+			$start= $request->fromdate?$request->fromdate:date('Y-m-d');
+			$allBill = $allBill->whereBetween('bill_date', [$start, $end]);
+		}
+		if($request->customer_contact){
+			$customer_id=Customer::where(company())->where('custCode', $request->customer_contact)->pluck('id');
+			$allBill = $allBill->where('customer_id', $customer_id);
+		}
+		
+		
+		$allBill = $allBill->orderBy('id', 'DESC')->paginate(25);
+
         return view('bill.replacelist', compact('allBill'));
     }
 
-    public function returnAll(){
+    public function returnAll(Request $request){
 		if(currentUser()=="salesman"){
         	$u=encryptor('decrypt', request()->session()->get('user'));
-			$allBill = Bill::where(company())->where(branch())->where('userId',$u)->whereIn('status',[3,4])->orderBy('id', 'DESC')->paginate(25);
+			$allBill = Bill::where(company())->where(branch())->where('userId',$u)->whereIn('status',[3,4]);
 		}
 		elseif(currentUser()=="salesmanager"){
-			$allBill = Bill::where(company())->where(branch())->whereIn('status',[3,4])->orderBy('id', 'DESC')->paginate(25);
+			$allBill = Bill::where(company())->where(branch())->whereIn('status',[3,4]);
 		}
 		else{
-			$allBill = Bill::where(company())->whereIn('status',[3,4])->orderBy('id', 'DESC')->paginate(25);
+			$allBill = Bill::where(company())->whereIn('status',[3,4]);
 		}
+		
+
+		if($request->fromdate){
+			$end = $request->todate?$request->todate:date('Y-m-d');
+			$start= $request->fromdate?$request->fromdate:date('Y-m-d');
+			$allBill = $allBill->whereBetween('bill_date', [$start, $end]);
+		}
+		if($request->customer_contact){
+			$customer_id=Customer::where(company())->where('custCode', $request->customer_contact)->pluck('id');
+			$allBill = $allBill->where('customer_id', $customer_id);
+		}
+		
+		
+		$allBill = $allBill->orderBy('id', 'DESC')->paginate(25);
         return view('bill.returnlist', compact('allBill'));
     }
 

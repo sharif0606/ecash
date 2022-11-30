@@ -1,5 +1,8 @@
 @extends('layout.admin.admin_master')
 @section('title', 'Batch Wise Stock Report List')
+@push('styles')
+<link rel="stylesheet" type="text/css" href="{{asset('/')}}assets/vendors/css/forms/select/select2.min.css">
+@endpush
 @section('content')
 <style>
 	thead tr th {
@@ -67,7 +70,7 @@ tfoot tr th {
 											</div>
 											<div class="col-lg-3 mb-lg-0 mb-6">
 												<label>To Date:</label>
-												<input type="date" class="form-control" name="todate"/>
+												<input type="date" class="form-control todate" name="todate"/>
 											</div>
 											<div class="col-lg-3 mb-lg-0 mb-6">
 												<label>Product:</label>
@@ -150,12 +153,18 @@ tfoot tr th {
 @endsection
 
 @push('scripts')
+<script src="{{asset('/')}}assets/vendors/js/forms/select/select2.full.min.js"></script>
 <script>
 	// predefined ranges
 	@if(isset($_GET['fromdate']))
 		$('.fromdate').val("{{$_GET['fromdate']}}");
 		$('.todate').val("{{$_GET['todate']}}");
 	@endif
+
+	//product select search init
+	$('.product').select2({
+		placeholder: 'Select Product'
+	});
  
 </script>
 

@@ -34,7 +34,7 @@
 		@csrf
 		<div class="row invoice-add">
 			<!-- Invoice Add Left starts -->
-			<div class="col-xl-9 col-md-8 col-12">
+			<div class="col-xl-9 col-md-8 col-12 pr-0">
 				<div class="card invoice-preview-card">
 					<!-- Header starts -->
 					<div class="card-body invoice-padding pb-0">
@@ -392,10 +392,6 @@ function check_term(e){
 	}
 }
 $(function () {
-	$('.item-details').select2({
-	placeholder: 'Select Product'
-});
-
 	'use strict';
   var data_list={
 	  @if($allCustomer)
@@ -532,7 +528,10 @@ $(function () {
 		}
 	  });
 	}
-  
+	//product select search init
+	$('.item-details').select2({
+		placeholder: 'Select Product'
+	});
 	// Repeater init
 	if (sourceItem.length) {
 	  sourceItem.on('submit', function (e) {
@@ -540,9 +539,9 @@ $(function () {
 	  });
 	  sourceItem.repeater({
 		show: function () {
-		  $(this).slideDown();
-		  $(".item-select2 span").data("select2-id", "2").hide();
-		  $('.item-details').select2({
+			$(this).slideDown();
+			$(".item-select2 span").data("select2-id", "2").hide();
+			$('.item-details').select2({
 				placeholder: 'Select Product'
 			});
 		},
@@ -572,11 +571,11 @@ $(function () {
 			value+='<option value="'+datas[i].batchId+'-'+datas[i].price+'-'+datas[i].tax+'-'+datas[i].discount+'-'+datas[i].stockId+'-'+datas[i].buyprice+'-'+datas[i].stock+'">serialNo:'+datas[i].serialNo+' - ram:'+datas[i].ram+' - storage:'+datas[i].storage+' - color:'+datas[i].color+' - Price:'+datas[i].price+'</option>';
 		}
 
-	  if ($this.next('select').length) {
-		$this.next('select').html(value);
-	  } else {
-		$this.parent().append('<select class="form-control mt-2" rows="2" name="batchId" onchange="setPrice(this.value,this)">' + value + '</select>');
-	  }
+		if ($this.parent().find('.selbatch').length)
+			$this.parent().find('.selbatch').html(value);
+		else
+		$this.parent().append('<select class="form-control mt-2 selbatch" rows="2" name="batchId" onchange="setPrice(this.value,this)">' + value + '</select>');
+		
 	});
 	if (btnAddNewItem.length) {
 	  	btnAddNewItem.on('click', function () {

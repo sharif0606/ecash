@@ -37,7 +37,7 @@
 		<input type="hidden" value="{{encryptor('encrypt', $bill->id)}}" name="id">
 		<div class="row invoice-add">
 			<!-- Invoice Add Left starts -->
-			<div class="col-xl-9 col-md-8 col-12">
+			<div class="col-xl-9 col-md-8 col-12 pr-0">
 				<div class="card invoice-preview-card">
 					<!-- Header starts -->
 					<div class="card-body invoice-padding pb-0">
@@ -120,84 +120,84 @@
 					<div class="card-body invoice-padding invoice-product-details">
 						<div class="source-item">
 							<div data-repeater-list="products">
-						@if($items)
-							@foreach ($items as $item)
-								<div class="repeater-wrapper" data-repeater-item>
-									<div class="row product_row">
-										<div class="col-12 d-flex product-details-border position-relative pe-0">
-											<div class="row w-100 pe-lg-0 pe-1 py-2">
-												<div class="col-lg-6 col-12 mb-lg-0 mb-2 mt-lg-0 mt-2">
-													<p class="card-text col-title mb-md-50 mb-0">Item</p>
-													<select class="form-select item-details" name="product_id">
-														<option value="" selected>Select Product</option>
-															@if($allProduct)
-																@foreach ($allProduct as $pro)
-																	<option value="{{$pro->id}}" @if($item->item_id==$pro->id) selected @endif>{{$pro->name}} - {{$pro->brand->name}} - {{$pro->modelName}} - {{$pro->ram}} - {{$pro->storage}} - {{$pro->color}}</option>
-																@endforeach
-															@endif
-													</select>
-													<select class="form-control mt-2" rows="2" name="batchId" onchange="setPrice(this.value,this)">
-														@if($item->batchId)
-															<option value="{{$item->batchId}}-{{$item->batch->sellPrice}}-{{$item->batch->discount}}-{{$item->batch->tax}}-{{$item->batch->id}}-{{$item->batch->buyPrice}}-{{$item->batch->stock}}">serialNo:{{$item->serialNo}} - ram:{{$item->ram}} - storage:{{$item->storage}} - color:{{$item->color}} - Price:{{$item->batch->sellPrice}}</option>
-														@endif
-													</select>
-												</div>
-												<div class="col-lg-2 col-12 my-lg-0 my-2">
-													<p class="card-text col-title mb-md-2 mb-0">Price</p>
-													<input type="text" class="form-control sub_price" onkeyup="totalInvoice()" value="{{$item->price}}" name="sub_price"/>
-													<div class="mt-2">
-														<span>Discount:</span>
-														<span class="discount">{{$item->discount}}%</span>
-													</div>
-												</div>
-												<div class="col-lg-2 col-12 my-lg-0 my-2">
-													<p class="card-text col-title mb-md-2 mb-0">Qty</p>
-													<input type="number" class="form-control qty" onkeyup="totalInvoice()" value="{{$item->qty}}" name="qty" />
-													<input type="hidden" class="maxqty" value="0"/>
-													<div class="mt-2">
-														<span>Tax:</span>
-														<span class="tax ms-50" data-bs-toggle="tooltip" data-bs-placement="top">{{$item->tax}}%</span>
-													</div>
-												</div>
-												<div class="col-lg-2 col-12 mt-lg-0 mt-2">
-													<p class="card-text col-title mb-md-50 mb-0">Price</p>
-													<input type="text" name="price" class="form-control price" onkeyup="totalInvoice()" value="{{$item->amount}}">
-												</div>
-											</div>
-											<div  class="d-flex flex-column align-items-center justify-content-between border-start invoice-product-actions py-50 px-25">
-												<i data-feather="x" class="cursor-pointer font-medium-3 data_delete" data-repeater-delete></i>
-												<div class="dropdown">
-													<i class="cursor-pointer more-options-dropdown me-0" data-feather="settings" id="dropdownMenuButton" role="button" data-bs-toggle="dropdown" aria-haspopup="true" aria-expanded="false"></i>
-													<div class="dropdown-menu dropdown-menu-end item-options-menu p-50" aria-labelledby="dropdownMenuButton">
-														<div class="mb-1">
-															<label for="discount-input" class="form-label">Discount(%)</label>
-															<input type="number" class="form-control discount-input" name="discount" value="{{$item->discount}}" />
+								@if($items)
+									@foreach ($items as $item)
+										<div class="repeater-wrapper" data-repeater-item>
+											<div class="row product_row">
+												<div class="col-12 d-flex product-details-border position-relative pe-0">
+													<div class="row w-100 pe-lg-0 pe-1 py-2">
+														<div class="col-lg-6 col-12 mb-lg-0 mb-2 mt-lg-0 mt-2 item-select2">
+															<p class="card-text col-title mb-md-50 mb-0">Item</p>
+															<select class="form-select item-details" name="product_id">
+																<option value="" selected>Select Product</option>
+																	@if($allProduct)
+																		@foreach ($allProduct as $pro)
+																			<option value="{{$pro->id}}" @if($item->item_id==$pro->id) selected @endif>{{$pro->name}} - {{$pro->brand->name}} - {{$pro->modelName}} - {{$pro->ram}} - {{$pro->storage}} - {{$pro->color}}</option>
+																		@endforeach
+																	@endif
+															</select>
+															<select class="form-control mt-2 batchhidetry" rows="2" name="batchId" onchange="setPrice(this.value,this)">
+																@if($item->batchId)
+																	<option value="{{$item->batchId}}-{{$item->batch->sellPrice}}-{{$item->batch->discount}}-{{$item->batch->tax}}-{{$item->batch->id}}-{{$item->batch->buyPrice}}-{{$item->batch->stock}}">serialNo:{{$item->serialNo}} - ram:{{$item->ram}} - storage:{{$item->storage}} - color:{{$item->color}} - Price:{{$item->batch->sellPrice}}</option>
+																@endif
+															</select>
 														</div>
-														<div class="form-row mt-50">
-															<div class="mb-1 col-md-6">
-																<label for="tax-1-input" class="form-label">Tax(%)</label>
-																<input type="number" class="form-control tax-input" name="tax" value="{{$item->tax}}" />
+														<div class="col-lg-2 col-12 my-lg-0 my-2">
+															<p class="card-text col-title mb-md-2 mb-0">Price</p>
+															<input type="text" class="form-control sub_price" onkeyup="totalInvoice()" value="{{$item->price}}" name="sub_price"/>
+															<div class="mt-2">
+																<span>Discount:</span>
+																<span class="discount">{{$item->discount}}%</span>
 															</div>
 														</div>
-														<div class="form-row mt-50">
-															<div class="mb-1">
-																<label for="tax-1-input" class="form-label">Actual Payment</label>
-																<input type="number" class="form-control actual_payment" name="actual_payment" value="{{$item->actual_payment}}" />
+														<div class="col-lg-2 col-12 my-lg-0 my-2">
+															<p class="card-text col-title mb-md-2 mb-0">Qty</p>
+															<input type="number" class="form-control qty" onkeyup="totalInvoice()" value="{{$item->qty}}" name="qty" />
+															<input type="hidden" class="maxqty" value="0"/>
+															<div class="mt-2">
+																<span>Tax:</span>
+																<span class="tax ms-50" data-bs-toggle="tooltip" data-bs-placement="top">{{$item->tax}}%</span>
 															</div>
 														</div>
-														<div class="dropdown-divider my-1"></div>
-														<div class="d-flex justify-content-between">
-															<button type="button" class="btn btn-outline-primary btn-apply-changes">Apply</button>
-															<button type="button" class="btn btn-outline-secondary">Cancel</button>
+														<div class="col-lg-2 col-12 mt-lg-0 mt-2">
+															<p class="card-text col-title mb-md-50 mb-0">Price</p>
+															<input type="text" name="price" class="form-control price" onkeyup="totalInvoice()" value="{{$item->amount}}">
+														</div>
+													</div>
+													<div  class="d-flex flex-column align-items-center justify-content-between border-start invoice-product-actions py-50 px-25">
+														<i data-feather="x" class="cursor-pointer font-medium-3 data_delete" data-repeater-delete></i>
+														<div class="dropdown">
+															<i class="cursor-pointer more-options-dropdown me-0" data-feather="settings" id="dropdownMenuButton" role="button" data-bs-toggle="dropdown" aria-haspopup="true" aria-expanded="false"></i>
+															<div class="dropdown-menu dropdown-menu-end item-options-menu p-50" aria-labelledby="dropdownMenuButton">
+																<div class="mb-1">
+																	<label for="discount-input" class="form-label">Discount(%)</label>
+																	<input type="number" class="form-control discount-input" name="discount" value="{{$item->discount}}" />
+																</div>
+																<div class="form-row mt-50">
+																	<div class="mb-1 col-md-6">
+																		<label for="tax-1-input" class="form-label">Tax(%)</label>
+																		<input type="number" class="form-control tax-input" name="tax" value="{{$item->tax}}" />
+																	</div>
+																</div>
+																<div class="form-row mt-50">
+																	<div class="mb-1">
+																		<label for="tax-1-input" class="form-label">Actual Payment</label>
+																		<input type="number" class="form-control actual_payment" name="actual_payment" value="{{$item->actual_payment}}" />
+																	</div>
+																</div>
+																<div class="dropdown-divider my-1"></div>
+																<div class="d-flex justify-content-between">
+																	<button type="button" class="btn btn-outline-primary btn-apply-changes">Apply</button>
+																	<button type="button" class="btn btn-outline-secondary">Cancel</button>
+																</div>
+															</div>
 														</div>
 													</div>
 												</div>
 											</div>
 										</div>
-									</div>
-								</div>
-							@endforeach
-						@endif
+									@endforeach
+								@endif
 							</div>
 							<div class="row mt-1">
 								<div class="col-12 px-0">
@@ -569,6 +569,10 @@ $(function () {
 		}
 	  });
 	}
+	//product select search init
+	$('.item-details').select2({
+		placeholder: 'Select Product'
+	});
   
 	// Repeater init
 	if (sourceItem.length) {
@@ -577,7 +581,11 @@ $(function () {
 	  });
 	  sourceItem.repeater({
 		show: function () {
-		  $(this).slideDown();
+			$(this).slideDown();
+			$(".item-select2 span").data("select2-id", "2").hide();
+			$('.item-details').select2({
+				placeholder: 'Select Product'
+			});
 		},
 		hide: function (e) {
 		  $(this).slideUp();
@@ -597,7 +605,8 @@ $(function () {
   
 	// Item details select onchange
 	$(document).on('change', '.item-details', function () {
-	  var $this = $(this);
+	  	var $this = $(this);
+		$this.siblings(".batchhidetry").hide();
 
 		var datas = productDetails[$this.val()];
 		var value='<option value="">Select Batch</option>';
@@ -605,11 +614,11 @@ $(function () {
 			value+='<option value="'+datas[i].batchId+'-'+datas[i].price+'-'+datas[i].tax+'-'+datas[i].discount+'-'+datas[i].stockId+'-'+datas[i].buyprice+'-'+datas[i].stock+'">serialNo:'+datas[i].serialNo+' - ram:'+datas[i].ram+' - storage:'+datas[i].storage+' - color:'+datas[i].color+' - Price:'+datas[i].price+'</option>';
 		}
 
-	  if ($this.next('select').length) {
-		$this.next('select').html(value);
-	  } else {
-		$this.after('<select class="form-control mt-2" rows="2" name="batchId" onchange="setPrice(this.value,this)">' + value + '</select>');
-	  }
+		if ($this.parent().find('.selbatch').length)
+			$this.parent().find('.selbatch').html(value);
+		else
+			$this.parent().append('<select class="form-control mt-2 selbatch" rows="2" name="batchId" onchange="setPrice(this.value,this)">' + value + '</select>');
+		
 	});
 	if (btnAddNewItem.length) {
 	  btnAddNewItem.on('click', function () {

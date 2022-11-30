@@ -48,6 +48,22 @@
     <!-- BEGIN: Custom CSS-->
     <link rel="stylesheet" type="text/css" href="{{asset('/')}}assets/css/style.css">
     <!-- END: Custom CSS-->
+    <style>
+      .header-navbar{
+        min-height: auto;
+      }
+      .navbar-floating .navbar-container:not(.main-menu-content){
+        padding:0 1rem;
+      }
+      .header-navbar.floating-nav {
+        margin: 0.3rem auto 0;
+        width: calc(100vw - (100vw - 100%) - calc(1rem * 2) - 260px);
+      }
+      html .content.app-content {
+          padding: calc(1rem + 2.45rem + 0.5rem) 1rem 0 !important;
+      }
+    
+    </style>
 	<!--begin::Page Style(used by this page)-->
 	@stack('styles')
 	<!--end::Page Style-->

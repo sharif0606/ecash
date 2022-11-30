@@ -1,8 +1,9 @@
 .invoice-preview .invoice-padding,
 .invoice-edit .invoice-padding,
 .invoice-add .invoice-padding {
-  padding-left: 2.5rem;
-  padding-right: 2.5rem; }
+  padding-left: 1rem;
+  padding-right: 1rem;
+  padding-bottom: .3rem; }
 
 .invoice-preview .table th:first-child,
 .invoice-preview .table td:first-child,
@@ -66,7 +67,7 @@
 .invoice-preview .invoice-spacing,
 .invoice-edit .invoice-spacing,
 .invoice-add .invoice-spacing {
-  margin: 1.45rem 0; }
+  margin: 0.45rem 0; }
 
 .invoice-preview .invoice-number-date .title,
 .invoice-edit .invoice-number-date .title,
@@ -128,7 +129,7 @@
 
 .invoice-edit .invoice-preview-card .invoice-to-title,
 .invoice-add .invoice-preview-card .invoice-to-title {
-  margin-bottom: 1.9rem; }
+  margin-bottom: 0.9rem; }
 
 .invoice-edit .invoice-preview-card .col-title,
 .invoice-add .invoice-preview-card .col-title {

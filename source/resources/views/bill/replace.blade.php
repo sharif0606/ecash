@@ -35,7 +35,7 @@
 		@csrf
 		<div class="row invoice-add">
 			<!-- Invoice Add Left starts -->
-			<div class="col-xl-9 col-md-8 col-12">
+			<div class="col-xl-9 col-md-8 col-12 pr-0">
 				<div class="card invoice-preview-card">
 					<!-- Header starts -->
 					<div class="card-body invoice-padding pb-0">
@@ -114,7 +114,7 @@
 									<div class="row product_row">
 										<div class="col-12 d-flex product-details-border position-relative pe-0">
 											<div class="row w-100 pe-lg-0 pe-1 py-2">
-												<div class="col-lg-6 col-12 mb-lg-0 mb-2 mt-lg-0 mt-2">
+												<div class="col-lg-6 col-12 mb-lg-0 mb-2 mt-lg-0 mt-2 item-select2">
 													<p class="card-text col-title mb-md-50 mb-0">Item</p>
 													<select class="form-select item-details" name="product_id" required>
 														<option value="" selected>Select Product</option>
@@ -554,6 +554,10 @@ $(function () {
 		}
 	  });
 	}
+	//product select search init
+	$('.item-details').select2({
+		placeholder: 'Select Product'
+	});
   
 	// Repeater init
 	if (sourceItem.length) {
@@ -563,6 +567,10 @@ $(function () {
 	  sourceItem.repeater({
 		show: function () {
 		  $(this).slideDown();
+		  $(".item-select2 span").data("select2-id", "2").hide();
+		  $('.item-details').select2({
+			placeholder: 'Select Product'
+		  });
 		},
 		hide: function (e) {
 		  $(this).slideUp();
@@ -583,18 +591,18 @@ $(function () {
 	// Item details select onchange
 	$(document).on('change', '.item-details', function () {
 	  var $this = $(this);
-
+		$this.find(".batchhidetry").hide();
 		var datas = productDetails[$this.val()];
 		var value='<option value="">Select Batch</option>';
 		for(var i in datas){
 			value+='<option value="'+datas[i].batchId+'-'+datas[i].price+'-'+datas[i].tax+'-'+datas[i].discount+'-'+datas[i].stockId+'-'+datas[i].buyprice+'-'+datas[i].stock+'">serialNo:'+datas[i].serialNo+' - ram:'+datas[i].ram+' - storage:'+datas[i].storage+' - color:'+datas[i].color+' - Price:'+datas[i].price+'</option>';
 		}
 
-	  if ($this.next('select').length) {
-		$this.next('select').html(value);
-	  } else {
-		$this.after('<select class="form-control mt-2" rows="2" name="batchId" onchange="setPrice(this.value,this)">' + value + '</select>');
-	  }
+		if ($this.parent().find('.selbatch').length)
+			$this.parent().find('.selbatch').html(value);
+		else
+			$this.parent().append('<select class="form-control mt-2 selbatch" rows="2" name="batchId" onchange="setPrice(this.value,this)">' + value + '</select>');
+		
 	});
 	if (btnAddNewItem.length) {
 	  btnAddNewItem.on('click', function () {
