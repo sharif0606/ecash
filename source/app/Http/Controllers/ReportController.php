@@ -15,22 +15,19 @@ class ReportController extends Controller
 {
 	public function stockBatch(Request $request){
         $allProduct = Product::select("id","name")->orderBy('id', 'DESC')->get();
+		$batchWiseReport = DB::table('stocks')->rightJoin('products', 'stocks.productId',  '=','products.id')->select('products.name', 'stocks.batchId','stocks.sellPrice','stocks.buyPrice', 'stocks.stock');
 		
 		$where['stocks.companyId']=company()['companyId'];
 		if(isset($_GET['product']) && $_GET['product'])
 			$where['stocks.productId']=$_GET['product'];
+
+		if($request->fromdate){
+			$end = $request->todate;
+			$start= $request->fromdate;
+			$batchWiseReport = $batchWiseReport->whereBetween('stocks.created_at', [$start, $end]);
+		}
 		
-		$end = $request->todate?$request->todate:date("Y-m-d");
-		$start= $request->fromdate?$request->fromdate:date("Y-m-d",strtotime ( '-365 days' , strtotime ( $end ) ));
-		
-		$batchWiseReport = DB::table('stocks')
-						->join('products', 'stocks.productId',  '=','products.id')
-						->select('products.name', 'stocks.batchId','stocks.sellPrice','stocks.buyPrice', 'stocks.stock')
-						->where($where)
-						->whereBetween('stocks.created_at', [$start, $end])
-						->orderBy('products.name')
-						->orderBy('stocks.batchId')
-						->get();
+		$batchWiseReport = $batchWiseReport->where($where)->orderBy('products.name')->orderBy('stocks.batchId')->get();
 						
 		return view('report.stock_batch_report', compact('batchWiseReport','allProduct'));
     }

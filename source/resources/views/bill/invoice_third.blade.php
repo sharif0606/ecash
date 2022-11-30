@@ -370,7 +370,7 @@
         </div>
 
         <div class="dwn-footer" style="text-align:right; position:fixed; bottom:10px; right:5px">
-            <p>powered by Cashbaksho</p>
+            <p>powered by E-Cash</p>
         </div>
     </div>
 </body>

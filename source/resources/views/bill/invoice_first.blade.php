@@ -289,7 +289,7 @@
 		</div>
 		<div class="footer">
 			<footer class=" float-md-right">
-				<a href="#" style="text-decoration: underline">powered by Cashbaksho</a>
+				<a href="#" style="text-decoration: underline">powered by E-Cash</a>
 			</footer>
 		</div>
 	</div>

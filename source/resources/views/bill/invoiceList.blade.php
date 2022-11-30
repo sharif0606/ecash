@@ -6,11 +6,11 @@
 @font-face {
 		font-family: 'kalp';
 		src: url({{asset('/')}}assets/css/Kalpurush.ttf) format("truetype");
-font-weight: 400; // use the matching font-weight here ( 100, 200, 300, 400, etc).
-font-style: normal; // use the matching font-style here
+		font-weight: 400; // use the matching font-weight here ( 100, 200, 300, 400, etc).
+		font-style: normal; // use the matching font-style here
 }
 body {
-font-family: "kalp";
+	font-family: "kalp";
 }
 </style> --}}
 <!--begin::Notice-->

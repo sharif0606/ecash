@@ -20,99 +20,94 @@
 	</div>
 
 	<div class="content-body">
-		<!-- Responsive tables start -->
-		<div class="row" id="table-responsive">
-			<div class="col-12">
-				<div class="card">
-					<div class="card-body">
-						<div class="table-responsive">
-							<div id="myTable_wrapper" class="dataTables_wrapper dt-bootstrap4 no-footer">
-								<div class="row">
-									<div class="col-sm-12">
-										<!--begin: Search Form-->
-										<form method="GET" action="{{route(currentUser().'.allBillReplace')}}" class="kt-form kt-form--fit mb-15">
-											<div class="row mb-1 ">
-												<div class="col-lg-3 mb-lg-0 mb-6">
-													<label>From Date:</label>
-													<input type="date" class="form-control fromdate" name="fromdate"/>
-												</div>
-												<div class="col-lg-3 mb-lg-0 mb-6">
-													<label>To Date:</label>
-													<input type="date" class="form-control todate" name="todate"/>
-												</div>
-												<div class="col-lg-3 mb-lg-0 mb-6">
-													<label>Customer:</label>
-													<input type="text" class="form-control customer_contact" placeholder="Contact Number" name="customer_contact"/>
-												</div>
-												<div class="col-lg-3 pt-2">
-													<button class="btn btn-primary btn-primary-icon" id="kt_search">
-														<span>
-															<i class="la la-search"></i>
-															<span>Search</span>
-														</span>
-													</button>&#160;&#160;
-													<a href="{{route(currentUser().'.allBillReplace')}}"
-														class="btn btn-secondary btn-secondary--icon" id="kt_reset">
-														<span>
-															<i class="la la-close"></i>
-															<span>Reset</span>
-														</span>
-													</a>
-												</div>
-											</div>
-										</form>
-										<table class="table table-striped text-center table-bordered dt-responsive dataTable">
-											<thead>
-												<tr>
-													<th>Bill No</th>
-													<th>Bill Details</th>
-													<th>Price</th>
-													<th>Due</th>
-													<th>Status</th>
-													<th>Action</th>
-												</tr>
-											</thead>
-
-											<tbody>
-												@if(count($allBill))
-												@foreach($allBill as $bill)
-												<tr role="row">
-													<td>{{$bill->bill_no}}</td>
-													<td>
-														<div class="d-flex align-items-start flex-column text-start">
-															
-															<div><span class="fw-bolder">Invoice Date:</span>
-																	{{ date('M d, Y',strtotime($bill->bill_date))}}</div>
-															<div><span class="fw-bolder">Customer Name:</span>
-																	{{$bill->customer->name}}</div>
-															<div><span class="fw-bolder">Customer Code:</span>
-																	{{$bill->customer->custCode}}</div>
-														</div>
-													</td>
-													<td>{{$bill->total_amount}}</td>
-													<td>{{$bill->total_due}}</td>
-													<td class="text-nowrap">
-														<div class="d-flex flex-column">
-															<a target="_blank" href="{{route(currentUser().'.billShow',[encryptor('encrypt', $bill->bill_reff)])}}" class="btn btn-danger" >
-																Replace to
-															</a>
-															<small>Reason: <span class="re{{encryptor('encrypt',$bill->id) }}">{{ $bill->cancel_reason }} </span></small>
-														</div>
-													</td>
-													<td>
-														<a class="btn btn-info" href="{{route(currentUser().'.billShow',[encryptor('encrypt', $bill->id)])}}">
-															<span>Show</span>
-														</a>
-													</td>
-												</tr>
-												@endforeach
-												@endif
-											</tbody>
-										</table>
-									</div>
+		<div class="card">
+			<div class="card-body">
+				<div class="row">
+					<div class="col-sm-12">
+						<!--begin: Search Form-->
+						<form method="GET" action="{{route(currentUser().'.allBillReplace')}}" class="kt-form kt-form--fit mb-15">
+							<div class="row mb-1 ">
+								<div class="col-lg-3 mb-lg-0 mb-6">
+									<label>From Date:</label>
+									<input type="date" class="form-control fromdate" name="fromdate"/>
+								</div>
+								<div class="col-lg-3 mb-lg-0 mb-6">
+									<label>To Date:</label>
+									<input type="date" class="form-control todate" name="todate"/>
+								</div>
+								<div class="col-lg-3 mb-lg-0 mb-6">
+									<label>Customer:</label>
+									<input type="text" class="form-control customer_contact" placeholder="Contact Number" name="customer_contact"/>
+								</div>
+								<div class="col-lg-3 pt-2">
+									<button class="btn btn-primary btn-primary-icon" id="kt_search">
+										<span>
+											<i class="la la-search"></i>
+											<span>Search</span>
+										</span>
+									</button>&#160;&#160;
+									<a href="{{route(currentUser().'.allBillReplace')}}"
+										class="btn btn-secondary btn-secondary--icon" id="kt_reset">
+										<span>
+											<i class="la la-close"></i>
+											<span>Reset</span>
+										</span>
+									</a>
 								</div>
 							</div>
+						</form>
+										
+						<div class="table-responsive">
+							<table class="table table-striped text-center table-bordered dt-responsive dataTable">
+								<thead>
+									<tr>
+										<th>Bill No</th>
+										<th>Bill Details</th>
+										<th>Price</th>
+										<th>Due</th>
+										<th>Status</th>
+										<th>Action</th>
+									</tr>
+								</thead>
+
+								<tbody>
+									@if(count($allBill))
+									@foreach($allBill as $bill)
+									<tr role="row">
+										<td>{{$bill->bill_no}}</td>
+										<td>
+											<div class="d-flex align-items-start flex-column text-start">
+												
+												<div><span class="fw-bolder">Invoice Date:</span>
+														{{ date('M d, Y',strtotime($bill->bill_date))}}</div>
+												<div><span class="fw-bolder">Customer Name:</span>
+														{{$bill->customer->name}}</div>
+												<div><span class="fw-bolder">Customer Code:</span>
+														{{$bill->customer->custCode}}</div>
+											</div>
+										</td>
+										<td>{{$bill->total_amount}}</td>
+										<td>{{$bill->total_due}}</td>
+										<td class="text-nowrap">
+											<div class="d-flex flex-column">
+												<a target="_blank" href="{{route(currentUser().'.billShow',[encryptor('encrypt', $bill->bill_reff)])}}" class="btn btn-danger" >
+													Replace to
+												</a>
+												<small>Reason: <span class="re{{encryptor('encrypt',$bill->id) }}">{{ $bill->cancel_reason }} </span></small>
+											</div>
+										</td>
+										<td>
+											<a class="btn btn-info" href="{{route(currentUser().'.billShow',[encryptor('encrypt', $bill->id)])}}">
+												<span>Show</span>
+											</a>
+										</td>
+									</tr>
+									@endforeach
+									@endif
+								</tbody>
+							</table>
 						</div>
+						<div class="text-center">{{$allBill->links()}}</div>
 					</div>
 				</div>
 			</div>

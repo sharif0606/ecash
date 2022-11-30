@@ -188,8 +188,6 @@
 						</div>
 					</div>
 					<!-- Invoice Total ends -->
-
-					<hr class="invoice-spacing mt-0" />
 				</div>
 			</div>
     		<!-- Invoice Add Left ends -->
@@ -293,7 +291,8 @@
 				</div>
     			<div class="card mt-2">
     				<div class="card-body">
-    				    <button type="submit" class="btn btn-outline-primary w-100">Save</button>
+						<label for="print_op"><input type="checkbox" checked value="1" id="print_op" name="print_op"> Print Invoice ?</label>
+    				    <button type="submit" class="btn btn-outline-primary w-100 mt-2">Save</button>
     				</div>
     			</div>
     		</div>

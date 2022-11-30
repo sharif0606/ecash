@@ -60,7 +60,8 @@
 									<span class="title">Old Invoice:</span>
 									<div class="input-group input-group-merge invoice-edit-input-group">
 										<div class="input-group-text"><i data-feather="hash"></i></div>
-										<input type="text" name="bill_ref" class="form-control invoice-edit-input" value="{{$oldid}}" readonly />
+										<input type="text" class="form-control invoice-edit-input" value="{{$purchase->purchase_no}}" disabled />
+										<input type="hidden" name="bill_ref" value="{{$oldid}}" readonly />
 									</div>
 								</div>
 								<div class="d-flex align-items-center mb-1">
@@ -132,7 +133,7 @@
 									<div class="row product_row">
 										<div class="col-12 d-flex product-details-border position-relative pe-0">
 											<div class="row w-100 pe-lg-0 pe-1 py-2">
-												<div class="col-lg-6 col-12 mb-lg-0 mb-2 mt-lg-0 mt-2">
+												<div class="col-lg-6 col-12 mb-lg-0 mb-2 mt-lg-0 mt-2 item-select2">
 													<p class="card-text col-title mb-md-50 mb-0">Item</p>
 													<select class="form-select item-details" name="product_id" required>
 														<option value="" selected>Select Product</option>
@@ -157,10 +158,12 @@
 													<div class="mt-2">
 														<span>Serial No:</span>
 														<span class="sl_no"></span>
+														<input type="hidden" class="sl_no" name="sl_no">
 													</div>
 													<div class="mt-2">
 														<span>IMEI No 1:</span>
 														<span class="imei_o"></span>
+														<input type="hidden" class="imei_o" name="imei_o">
 													</div>
 												</div>
 												<div class="col-lg-2 col-12 my-lg-0 my-2">
@@ -169,10 +172,12 @@
 													<div class="mt-2">
 														<span>Ram:</span>
 														<span class="ram"></span>
+														<input type="hidden" class="ram" name="ram">
 													</div>
 													<div class="mt-2">
 														<span>IMEI No 2:</span>
 														<span class="imei_t"></span>
+														<input type="hidden" class="imei_t" name="imei_t">
 													</div>
 												</div>
 												<div class="col-lg-2 col-12 mt-lg-0 mt-2">
@@ -181,10 +186,12 @@
 													<div class="mt-2">
 														<span>Color:</span>
 														<span class="color"></span>
+														<input type="hidden" class="color" name="color">
 													</div>
 													<div class="mt-2">
 														<span>Storage:</span>
 														<span class="storage"></span>
+														<input type="hidden" class="storage" name="storage">
 													</div>
 												</div>
 											</div>
@@ -696,7 +703,10 @@ $(function () {
 		}
 	  });
 	}
-  
+  	//product select search init
+	$('.item-details').select2({
+		placeholder: 'Select Product'
+	});
 	// Repeater init
 	if (sourceItem.length) {
 	  sourceItem.on('submit', function (e) {
@@ -705,6 +715,10 @@ $(function () {
 	  sourceItem.repeater({
 		show: function () {
 		  $(this).slideDown();
+			$(".item-select2 > span").data("select2-id", "2").hide();
+			$('.item-details').select2({
+				placeholder: 'Select Product'
+			});
 		},
 		hide: function (e) {
 		  $(this).slideUp();
@@ -724,6 +738,12 @@ $(function () {
   
 	// Item details select onchange
 	$(document).on('change', '.item-details', function () {
+	  var $this = $(this);
+	  $(this).parents('.product_row').find('.sell_price').val("");
+	  $(this).parents('.product_row').find('.buy_price').val("");
+	  $(this).parents('.product_row').find('.qty').val(1);
+	});
+	/*$(document).on('change', '.item-details', function () {
 	  var $this = $(this);
 	  $(this).parents('.product_row').find('.sell_price').val("");
 	  $(this).parents('.product_row').find('.buy_price').val("");
@@ -767,6 +787,7 @@ $(function () {
     });
 
 	});
+	*/
 	if (btnAddNewItem.length) {
 	  btnAddNewItem.on('click', function () {
 		if (feather) {

@@ -38,42 +38,68 @@ class PurchaseController extends Controller
         View::share('allZone', $allZone);
     }
     
-    public function index(){
-		if(currentUser()=="salesman"){
-        	$u=encryptor('decrypt', request()->session()->get('user'));
-			$allPurchase = Purchase::where(company())->where(branch())->where('userId',$u)->whereIn('status',[1,2])->orderBy('id', 'DESC')->paginate(25);
+    public function index(Request $request){
+		if(currentUser()=="salesman")
+			$allPurchase = Purchase::where(company())->where(branch())->where('userId',encryptor('decrypt', request()->session()->get('user')))->whereIn('status',[1,2]);
+		elseif(currentUser()=="salesmanager")
+			$allPurchase = Purchase::where(company())->where(branch())->whereIn('status',[1,2]);
+		else
+			$allPurchase = Purchase::where(company())->orderBy('id', 'DESC')->whereIn('status',[1,2]);
+		
+		if($request->fromdate){
+			$end = $request->todate?$request->todate:date('Y-m-d');
+			$start= $request->fromdate?$request->fromdate:date('Y-m-d');
+			$allPurchase = $allPurchase->whereBetween('purchase_date', [$start, $end]);
 		}
-		elseif(currentUser()=="salesmanager"){
-			$allPurchase = Purchase::where(company())->where(branch())->whereIn('status',[1,2])->orderBy('id', 'DESC')->paginate(25);
-		}else{
-			$allPurchase = Purchase::where(company())->orderBy('id', 'DESC')->whereIn('status',[1,2])->paginate(25);
+		if($request->supplier_contact){
+			$supplier_id=Supplier::where(company())->where('supCode', $request->supplier_contact)->pluck('id');
+			$allPurchase = $allPurchase->where('sup_id', $supplier_id);
 		}
+		$allPurchase = $allPurchase->orderBy('id', 'DESC')->paginate(25);
         return view('purchase.index', compact('allPurchase'));
     }
     
-    public function replaceAll(){
-		if(currentUser()=="salesman"){
-        	$u=encryptor('decrypt', request()->session()->get('user'));
-			$allPurchase = Purchase::where(company())->where(branch())->where('userId',$u)->whereIn('status',[5])->orderBy('id', 'DESC')->paginate(25);
-		}elseif(currentUser()=="salesmanager"){
-			$allPurchase = Purchase::where(company())->where(branch())->whereIn('status',[5])->orderBy('id', 'DESC')->paginate(25);
-		}else{
-			$allPurchase = Purchase::where(company())->orderBy('id', 'DESC')->whereIn('status',[5])->paginate(25);
+    public function replaceAll(Request $request){
+		if(currentUser()=="salesman")
+			$allPurchase = Purchase::where(company())->where(branch())->where('userId',encryptor('decrypt', request()->session()->get('user')))->whereIn('status',[5]);
+		elseif(currentUser()=="salesmanager")
+			$allPurchase = Purchase::where(company())->where(branch())->whereIn('status',[5]);
+		else
+			$allPurchase = Purchase::where(company())->orderBy('id', 'DESC')->whereIn('status',[5]);
+		
+		if($request->fromdate){
+			$end = $request->todate?$request->todate:date('Y-m-d');
+			$start= $request->fromdate?$request->fromdate:date('Y-m-d');
+			$allPurchase = $allPurchase->whereBetween('purchase_date', [$start, $end]);
 		}
+		if($request->supplier_contact){
+			$supplier_id=Supplier::where(company())->where('supCode', $request->supplier_contact)->pluck('id');
+			$allPurchase = $allPurchase->where('sup_id', $supplier_id);
+		}
+		$allPurchase = $allPurchase->orderBy('id', 'DESC')->paginate(25);
+
         return view('purchase.replacelist', compact('allPurchase'));
     }
     
-    public function returnAll(){
-		if(currentUser()=="salesman"){
-        	$u=encryptor('decrypt', request()->session()->get('user'));
-			$allPurchase = Purchase::where(company())->where(branch())->where('userId',$u)->whereIn('status',[3,4])->orderBy('id', 'DESC')->paginate(25);
+    public function returnAll(Request $request){
+		if(currentUser()=="salesman")
+			$allPurchase = Purchase::where(company())->where(branch())->where('userId',encryptor('decrypt', request()->session()->get('user')))->whereIn('status',[3,4]);
+		elseif(currentUser()=="salesmanager")
+			$allPurchase = Purchase::where(company())->where(branch())->whereIn('status',[3,4]);
+		else
+			$allPurchase = Purchase::where(company())->orderBy('id', 'DESC')->whereIn('status',[3,4]);
+		
+		if($request->fromdate){
+			$end = $request->todate?$request->todate:date('Y-m-d');
+			$start= $request->fromdate?$request->fromdate:date('Y-m-d');
+			$allPurchase = $allPurchase->whereBetween('purchase_date', [$start, $end]);
 		}
-		elseif(currentUser()=="salesmanager"){
-			$allPurchase = Purchase::where(company())->where(branch())->whereIn('status',[3,4])->orderBy('id', 'DESC')->paginate(25);
+		if($request->supplier_contact){
+			$supplier_id=Supplier::where(company())->where('supCode', $request->supplier_contact)->pluck('id');
+			$allPurchase = $allPurchase->where('sup_id', $supplier_id);
 		}
-		else{
-			$allPurchase = Purchase::where(company())->orderBy('id', 'DESC')->whereIn('status',[3,4])->paginate(25);
-		}
+		$allPurchase = $allPurchase->orderBy('id', 'DESC')->paginate(25);
+			
         return view('purchase.returnlist', compact('allPurchase'));
     }
 
@@ -150,19 +176,18 @@ class PurchaseController extends Controller
 			if($allSupplier){
 	  			foreach ($allSupplier as $cust){
 		  			$allcust[$cust->id]=array(
-		  				 	"name"=> $cust->name,
-						   "address"=> $cust->address,
-						   "contact_person"=> $cust->contact_person,
-						   "contact_no_b"=> $cust->contact_no_b,
-						   "supCode"=> $cust->supCode,
-						   "email"=> $cust->email,
-						   "zone"=> $cust->zone?$cust->zone->name:""
-					  );
+						"name"=> $cust->name,
+						"address"=> $cust->address,
+						"contact_person"=> $cust->contact_person,
+						"contact_no_b"=> $cust->contact_no_b,
+						"supCode"=> $cust->supCode,
+						"email"=> $cust->email,
+						"zone"=> $cust->zone?$cust->zone->name:""
+					);
 				}
-			 }
-			 return json_encode(array("exitstSupplier" => false,"selected"=>$supplier->id, "data"=>$data,"error"=>$error,"allSupplier"=>$allcust));
-		}
-		else{
+			}
+			return json_encode(array("exitstSupplier" => false,"selected"=>$supplier->id, "data"=>$data,"error"=>$error,"allSupplier"=>$allcust));
+		}else{
 			echo json_encode(array("data"=>"","error"=>"Supplier not saved."));
 		}
     }
@@ -206,25 +231,19 @@ class PurchaseController extends Controller
     }
     
     public function getProduct(Request $request){
-		
 		$b = ProductList::where("serialNo",$request->slno)->first();
-		if($b){
+		if($b)
 			echo json_encode(array("data"=>$b,"error"=>0));
-		}
-		else{
+		else
 			echo json_encode(array("data"=>"","error"=>"Product not found."));
-		}
     }
     
 	public function getProductDetails(Request $request){
-		
 		$b = Stock::find($request->product_id);
-		if($b){
+		if($b)
 			echo json_encode(array("data"=>$b,"error"=>0));
-		}
-		else{
+		else
 			echo json_encode(array("data"=>"","error"=>"Product details not found."));
-		}
     }
 
 	public function setProductDetails(Request $request){
@@ -338,16 +357,15 @@ class PurchaseController extends Controller
 						if($details['tax']>0)
 							$tax=($details['buyPrice']*($details['tax']/100));
 
-						$bi->amount	 	= (($details['buyPrice']+$dist)-$tax);
+						$bi->amount	 = (($details['buyPrice']+$dist)-$tax);
 						$bi->save();
 					}
 				}
 				DB::commit();
-				if($request->print_op){
+				if($request->print_op)
 				    return redirect(route(currentUser().'.purchaseShow',[encryptor('encrypt', $b->id)]))->with($this->responseMessage(true, null, 'Purchase created'));
-				}else{
+				else
 				    return redirect(route(currentUser().'.allPurchase'))->with($this->responseMessage(true, null, 'Purchase created'));
-				}
 			}
 			else{
 				return redirect()->back()->with($this->responseMessage(false, 'error', 'Please try again!'));
@@ -443,7 +461,6 @@ class PurchaseController extends Controller
         }
     }
 	
-
     public function purchasePDF($id,$type) {
         $Purchase = Purchase::find(encryptor('decrypt', $id));
 		$company = Company::where(company())->orderBy('id', 'DESC')->first();
@@ -537,15 +554,15 @@ class PurchaseController extends Controller
 						if($id==(count($request->products)-1)){
 							if($request->batchId){
 								$oldstock=true;
-                    			$stock=Stock::find(explode('-',$request->batchId)[3]);
+                    			$stock=Stock::where('batchId',$request->batchId)->first();
 							}elseif($details['batchId']){
 								$oldstock=true;
-								$stock=Stock::find(explode('-',$details['batchId'])[3]);
+								$stock=Stock::where('batchId',$details['batchId'])->first();
 							}
 						}else{
 							if($details['batchId']){
 								$oldstock=true;
-								$stock=Stock::find(explode('-',$details['batchId'])[3]);
+								$stock=Stock::where('batchId',$details['batchId'])->first();
 							}
 						}
 						if($oldstock==true){
@@ -686,7 +703,7 @@ class PurchaseController extends Controller
 			$b->created_at 		= Carbon::now();
 
 			if(!!$b->save()){
-				foreach($request->products as $id => $details){
+				/*foreach($request->products as $id => $details){
 					if($details['product_id'] && $details['qty']){
 						$oldbatch=false;
 						if($id==(count($request->products)-1)){
@@ -743,7 +760,52 @@ class PurchaseController extends Controller
 						$bi->amount	 	= (($details['buyPrice']+$dist)-$tax);
 						$bi->save();
 					}
+				}*/
+
+				foreach($request->products as $id => $details){
+					if($details['product_id'] && $details['qty']){
+					    $stock=new Stock;
+						$stock->companyId 	= company()['companyId'];
+						$stock->branchId 	= branch()['branchId'];
+						$stock->productId=$details['product_id'];
+						$stock->batchId=$details['product_id'].$b->userId.date('dmy').rand(1000,9999);
+						$stock->stock=$details['qty'];
+						$stock->sellPrice=$details['sellPrice'];
+						$stock->buyPrice=$details['buyPrice'];
+						$stock->serialNo=$details['sl_no'];
+						$stock->ram=$details['ram'];
+						$stock->storage=$details['storage'];
+						$stock->color=$details['color'];
+						$stock->imei_1=$details['imei_o'];
+						$stock->imei_2=$details['imei_t'];
+						
+                        //print_r(DB::getQueryLog());die();
+    					$stock->save();
+
+						$bi 			= new PurchaseItem;
+						$bi->companyId 	= company()['companyId'];
+						$bi->branchId 	= branch()['branchId'];
+						$bi->purchase_id= $b->id;
+						$bi->item_id 	= $details['product_id'];
+						$bi->batchId 	= $stock->batchId;
+						$bi->qty 		= $details['qty'];
+						$bi->price 		= $details['buyPrice'];
+						$bi->discount	= $details['discount'];
+						$bi->tax	 	= $details['tax'];
+
+						$dist=0;
+						if($details['discount']>0)
+							$dist=($details['buyPrice']*($details['discount']/100));
+
+						$tax=0;
+						if($details['tax']>0)
+							$tax=($details['buyPrice']*($details['tax']/100));
+
+						$bi->amount	 = (($details['buyPrice']+$dist)-$tax);
+						$bi->save();
+					}
 				}
+
 				$oldpurchase = Purchase::find($request->bill_ref);
 				$oldpurchase->status = 5;
 				$oldpurchase->bill_reff = $b->id;
@@ -760,7 +822,7 @@ class PurchaseController extends Controller
 				return redirect()->back()->with($this->responseMessage(false, 'error', 'Please try again!'));
 			}
 		}catch (Exception $e) {
-			//dd($e);
+			dd($e);
 			DB::rollBack();
 			return redirect()->back()->with($this->responseMessage(false, 'error', 'Please try again!'));
 		}

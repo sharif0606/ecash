@@ -271,7 +271,7 @@ thead{
         </div>
             <div class="sig" style="margin-top: 10px;">
                 <p>Signeture</p>
-                <p> <img alt="Pic" src="{{asset("storage/images/company/$company->billing_signature")}}" width="100px"> </p><p style="float:right;margin-top:-40px;text-align:right"><span>powered by Cashbaksho</span></p>
+                <p> <img alt="Pic" src="{{asset("storage/images/company/$company->billing_signature")}}" width="100px"> </p><p style="float:right;margin-top:-40px;text-align:right"><span>powered by E-Cash</span></p>
                 
             </div>
     </div>

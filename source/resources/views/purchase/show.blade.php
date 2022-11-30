@@ -6,11 +6,11 @@
 
 	<!-- begin::Card-->
 	<div class="card card-custom overflow-hidden" id="printArea">
-		<div class="card-body p-0">
+		<div class="card-body p-2">
 			<!-- begin: Invoice-->
 			<!-- begin: Invoice header-->
 			<div class="row justify-content-center py-8 px-8 py-md-27 px-md-0">
-				<div class="col-md-9">
+				<div class="col-md-11">
 					<div class="d-flex justify-content-between pb-10 pb-md-20 flex-column flex-md-row">
 						<h1 class="display-4 font-weight-boldest mb-10">INVOICE</h1>
 						<div class="d-flex flex-column align-items-md-end px-0">
@@ -33,17 +33,18 @@
 					<div class="border-bottom w-100"></div>
 					<div class="d-flex justify-content-between pt-6">
 						<div class="d-flex flex-column flex-root">
-							<span class="font-weight-bolder mb-2">DATE</span>
+							<span class="fw-bold">DATE</span>
 							<span class="opacity-70">{{ date('M d,Y',strtotime($Purchase->purchase_date)) }}</span>
 						</div>
 						<div class="d-flex flex-column flex-root">
-							<span class="font-weight-bolder mb-2">INVOICE NO.</span>
+							<span class="fw-bold">INVOICE NO.</span>
 							<span class="opacity-70">{{ str_pad($Purchase->purchase_no,7,'0',STR_PAD_LEFT) }}</span>
 						</div>
 						<div class="d-flex flex-column flex-root">
-							<span class="font-weight-bolder mb-2">INVOICE From.</span>
+							<span class="fw-bold">INVOICE From.</span>
 							<span class="opacity-70">
-							    {{ $Purchase->supplier->name }},<br />{{ $Purchase->supplier->address }}
+							    {{ $Purchase->supplier->name }},
+								@if($Purchase->supplier->address)<br />{{ $Purchase->supplier->address }} @endif
 							    @if($Purchase->supplier->supCode)
 							        <br>
     								<abbr title="Phone">P:</abbr> {{ $Purchase->supplier->supCode }}
@@ -65,7 +66,7 @@
 			<!-- end: Invoice header-->
 			<!-- begin: Invoice body-->
 			<div class="row justify-content-center py-8 px-8 py-md-10 px-md-0">
-				<div class="col-md-9">
+				<div class="col-md-11">
 					<div class="table-responsive">
 						<table class="table">
 							<thead>
@@ -94,27 +95,27 @@
 							</tbody>
 							<tfoot>
 							    <tr>                                                        
-									<td colspan="4" class="border-0"></td>
+									<td colspan="4" class="border-0 bg-white"></td>
 									<td class="text-right border-1 font-14"><b>Sub Total</b></td>
 									<td class="text-right border-1 font-14"><b>{{ $company->currency_symble }} {{ number_format($Purchase->sub_total)  }}</b></td>
 								</tr>
 								<tr>
-									<th colspan="4" class="border-0"></th>
+									<th colspan="4" class="border-0 bg-white"></th>
 									<td class="text-right border-1 font-14"><b>Tax</b></td>
 									<td class="text-right border-1 font-14"><b> {{ $company->currency_symble }} {{ number_format($Purchase->total_tax) }} </b></td>
 								</tr>
 								<tr>
-									<th colspan="4" class="border-0"></th>
+									<th colspan="4" class="border-0 bg-white"></th>
 									<td class="text-right border-1 font-14"><b>Discount</b></td>
 									<td class="text-right border-1 font-14"><b> {{ $company->currency_symble }} {{ number_format($Purchase->total_dis) }} </b></td>
 								</tr>
 								<tr>
-									<th colspan="4" class="border-0"></th>
+									<th colspan="4" class="border-0 bg-white"></th>
 									<td class="text-right border-1 font-14"><b>Due</b></td>
 									<td class="text-right border-1 font-14"><b>{{ $company->currency_symble }} {{ number_format($Purchase->total_due) }} </b></td>
 								</tr>
 								<tr>
-									<th colspan="4" class="border-0"></th>                                                        
+									<th colspan="4" class="border-0 bg-white"></th>                                                        
 									<td class="text-right border-1 font-14"><b>Total</b></td>
 									<td class="text-right border-1 font-14"><b>{{ $company->currency_symble }} {{ number_format($Purchase->total_amount) }}</b></td>
 								</tr>
@@ -126,7 +127,7 @@
 			<!-- end: Invoice body-->
 			<!-- begin: Invoice footer-->
 			<div class="row justify-content-center bg-gray-100 py-8 px-8 py-md-10 px-md-0">
-				<div class="col-md-9">
+				<div class="col-md-11">
 					<div class="table-responsive">
 					    @if($Purchase->purchase_term==2 || $Purchase->purchase_term==3)
 						<table class="table">
@@ -182,7 +183,7 @@
 			<div class="row justify-content-center py-8 px-8 py-md-10 px-md-0">
 				<div class="col-md-9">
 					<div class="d-flex justify-content-between">
-						<a class="btn btn-light-primary font-weight-bold dontPrint" href="{{route(currentUser().'.purchasePDF',[encryptor('encrypt', $Purchase->id),Replace('download')])}}">Download Invoice</a>
+						<a class="btn btn-info font-weight-bold dontPrint" href="{{route(currentUser().'.purchasePDF',[encryptor('encrypt', $Purchase->id),Replace('download')])}}">Download Invoice</a>
 						<a class="btn btn-primary font-weight-bold dontPrint" href="{{route(currentUser().'.purchasePDF',[encryptor('encrypt', $Purchase->id),Replace('print')])}}" target="_blank">Print Invoice</a>
 					</div>
 				</div>
