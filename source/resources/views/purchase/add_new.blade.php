@@ -54,7 +54,7 @@
 									<h4 class="invoice-title">Invoice</h4>
 									<div class="input-group input-group-merge invoice-edit-input-group">
 										<div class="input-group-text"><i data-feather="hash"></i></div>
-										<input type="text" class="form-control invoice-edit-input" name="bill_no" readonly />
+										<input type="text" class="form-control invoice-edit-input" name="ref_no" required />
 									</div>
 								</div>
 								<div class="d-flex align-items-center mb-1">
@@ -149,7 +149,7 @@
 												</div>
 												<div class="col-lg-2 col-12 mt-lg-0 mt-2">
 													<p class="card-text col-title mb-md-2 mb-0">Qty</p>
-													<input type="number" class="form-control qty" readonly onkeyup="totalInvoice()" value="1" name="qty" />
+													<input type="number" class="form-control qty" onkeyup="totalInvoice();" value="1" name="qty" />
 													<div class="mt-2">
 														<span>Color:</span>
 														<span class="color"></span>
@@ -180,14 +180,14 @@
 														
 														<div class="form-row row mt-50">
 															<div class="mb-1 col-6">
-																<label for="tax-1-input" class="form-label">Unlock Qty</label>
+																<label for="tax-1-input" class="form-label">Lock Qty</label>
 															</div>
 															<div class="mb-1 col-6">
 																<div class="form-check form-check-danger form-switch">
-                                                                    <input type="checkbox" class="form-check-input unlock_qty">
+                                                                    <input type="checkbox" checked class="form-check-input unlock_qty">
                                                                 </div>
 															</div>
-															<span class="text-danger">If you unlock qty, your unique serial number will not affected then.</span>
+															<span class="text-danger">If you Lock qty, your unique serial number will affected then.</span>
 														</div>
 														<div class="dropdown-divider my-1"></div>
 														<div class="d-flex justify-content-between">
@@ -207,10 +207,10 @@
 										<i data-feather="plus" class="me-25"></i>
 										<span class="align-middle">Add Item</span>
 									</button>
-									<button type="button" class="btn btn-primary btn-sm duplicate btn-add-new" data-repeater-create>
+									{{--<button type="button" class="btn btn-primary btn-sm duplicate btn-add-new" data-repeater-create>
 										<i data-feather="plus" class="me-25"></i>
 										<span class="align-middle">Add Duplicate</span>
-									</button>
+									</button>--}}
 								</div>
 							</div>
 						</div>
@@ -420,26 +420,6 @@
 					<form id="productDetails">
 						<div class="row mb-1">
 							<div class="col">
-								<label for="serialNo" class="form-label">Serial No</label>
-								<input type="text" class="form-control" name="serialNo" id="serialNo" placeholder="Serial" />
-							</div>
-							<div class="col">
-								<label for="imei_1" class="form-label">IMEI No</label>
-								<input type="text" class="form-control" name="imei_1" id="imei_1" placeholder="IMEI" />	
-							</div>
-						</div>
-						<div class="row mb-1">
-							<div class="col">
-								<label for="ram" class="form-label">Ram</label>
-								<input type="text" class="form-control" name="ram" id="ram" placeholder="ram" />
-							</div>
-							<div class="col">
-								<label for="imei_2" class="form-label">IMEI No 2</label>
-								<input type="text" class="form-control" name="imei_2" id="imei_2" placeholder="IMEI" />	
-							</div>
-						</div>
-						<div class="row mb-1">
-							<div class="col">
 								<label for="color" class="form-label">Color</label>
 								<input type="text" class="form-control" name="color" id="color" placeholder="color" />
 							</div>
@@ -447,6 +427,19 @@
 								<label for="storage" class="form-label">Storage</label>
 								<input type="text" class="form-control" name="storage" id="storage" placeholder="Storage" />	
 							</div>
+						</div>
+						<div class="row mb-1">
+							<div class="col">
+								<label for="serialNo" class="form-label">Serial No</label>
+								<input type="text" class="form-control" name="serialNo" id="serialNo" placeholder="Serial" />
+							</div>
+							<div class="col">
+								<label for="ram" class="form-label">Ram</label>
+								<input type="text" class="form-control" name="ram" id="ram" placeholder="ram" />
+							</div>
+						</div>
+						<div class="imeirow">
+							
 						</div>
 						<div class="mb-1 d-flex flex-wrap mt-2">
 						<button type="button" class="btn btn-primary me-1" data-bs-dismiss="modal" onclick="saveProductDetails()">Add</button>
@@ -554,7 +547,7 @@ $(function () {
 	$('.duplicate').on('click', function () {
 	    dup_car=$( ".item-details" ).last().val();
 	});
-  var data_list={
+  	var data_list={
 	  @if($allSupplier)
 	  	@foreach ($allSupplier as $sup)
 		  {{$sup->id}}:{
@@ -626,7 +619,7 @@ $(function () {
 	// Country Select2
     if (countrySelect.length) {
         countrySelect.select2({
-            placeholder: 'Select country',
+            placeholder: 'Select Country',
             dropdownParent: countrySelect.parent()
         });
     }
@@ -646,24 +639,12 @@ $(function () {
             var $this = $(this),
             renderDetails =
 			'<div class="supplier-details mt-1">' +
-			'<p class="mb-25">' +
-			supplierDetails[$this.val()].name +
-			'</p>' +
-			'<p class="mb-25">' +
-			supplierDetails[$this.val()].address +
-			'</p>' +
-			'<p class="mb-25">' +
-			supplierDetails[$this.val()].zone +
-			'</p>' +
-			'<p class="mb-0">' +
-			supplierDetails[$this.val()].contact_no_b +
-			'</p>' +
-			'<p class="mb-0">' +
-			supplierDetails[$this.val()].supCode +
-			'</p>' +
-			'<p class="mb-0">' +
-			supplierDetails[$this.val()].email +
-			'</p>' +
+			'<p class="mb-25">'+supplierDetails[$this.val()].name+'</p>' +
+			'<p class="mb-25">'+supplierDetails[$this.val()].address+'</p>' +
+			'<p class="mb-25">'+supplierDetails[$this.val()].zone+'</p>' +
+			'<p class="mb-0">'+supplierDetails[$this.val()].contact_no_b+'</p>' +
+			'<p class="mb-0">'+supplierDetails[$this.val()].supCode+'</p>' +
+			'<p class="mb-0">'+supplierDetails[$this.val()].email+'</p>' +
 			'</div>';
             $('.row-bill-to').find('.supplier-details').remove();
             $('.row-bill-to').find('.col-bill-to').append(renderDetails);
@@ -772,6 +753,21 @@ $(function () {
 			$('#add-new-product-details').modal('hide');
 		}else{
 			$('#add-new-product-details').modal('show');
+			var qtyval=current_product.parents('.product_row').find('.qty').val();
+			$('.imeirow').empty();
+			for(var i=0; i<qtyval; i++){
+				$('.imeirow').append('<div class="row mb-1">\
+										<div class="col">\
+											<label class="form-label">IMEI No</label>\
+											<input type="text" class="form-control imei_1" name="imei_1" placeholder="IMEI" />	\
+										</div>\
+										<div class="col">\
+											<label for="imei_2" class="form-label">IMEI No 2</label>\
+											<input type="text" class="form-control imei_2" name="imei_2" placeholder="IMEI" />	\
+										</div>\
+									</div>');
+			}
+			
 		}
 	});
 });
@@ -883,14 +879,27 @@ function saveProductDetails(){
 	current_product.parents('.product_row').find('.color').html($('#color').val());
 	current_product.parents('.product_row').find('input.color').val($('#color').val());
 	
-	current_product.parents('.product_row').find('.imei_o').html($('#imei_1').val());
-	current_product.parents('.product_row').find('input.imei_o').val($('#imei_1').val());
-	
-	current_product.parents('.product_row').find('.imei_t').html($('#imei_2').val());
-	current_product.parents('.product_row').find('input.imei_t').val($('#imei_2').val());
-	
 	current_product.parents('.product_row').find('.storage').html($('#storage').val());
 	current_product.parents('.product_row').find('input.storage').val($('#storage').val());
+
+	var imei1class=$('.imei_1');
+	var imei2class=$('.imei_2');
+	var imei1classv="";
+	var imei2classv="";
+	for(var ii=0; ii < imei1class.length; ii++){
+		imei1classv+=$(imei1class[ii]).val()?$(imei1class[ii]).val()+',':0+',';
+	}
+	for(var ii=0; ii < imei2class.length; ii++){
+		imei2classv+=$(imei2class[ii]).val()?$(imei2class[ii]).val()+',':0+',';
+	}
+	imei1classv=imei1classv.substring(0,imei1classv.length - 1);
+	imei2classv=imei2classv.substring(0, imei2classv.length - 1);
+	
+	current_product.parents('.product_row').find('.imei_o').html(imei1classv);
+	current_product.parents('.product_row').find('input.imei_o').val(imei1classv);
+	
+	current_product.parents('.product_row').find('.imei_t').html(imei2classv);
+	current_product.parents('.product_row').find('input.imei_t').val(imei2classv);
 }
 
 function setPrice(e,s){
@@ -948,7 +957,6 @@ function totalInvoice(){
 }
 
 function cal_final_change(predefinedamount=""){
-	
     var total_cal=parseFloat($('.total_').text());
     var totalpaid=parseFloat(predefinedamount) > 0 ? parseFloat(predefinedamount) : parseFloat($('.total_ip').val());
     var amremain=0;
@@ -970,8 +978,8 @@ function cal_final_change(predefinedamount=""){
 }
 
 function remove_this(e){
-     $(e).closest("[data-repeater-item]").remove();
-     totalInvoice();
+	$(e).closest("[data-repeater-item]").remove();
+	totalInvoice();
 }
 
 </script>

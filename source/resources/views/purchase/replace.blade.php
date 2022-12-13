@@ -53,7 +53,7 @@
 									<h4 class="invoice-title">Invoice</h4>
 									<div class="input-group input-group-merge invoice-edit-input-group">
 										<div class="input-group-text"><i data-feather="hash"></i></div>
-										<input type="text" class="form-control invoice-edit-input" name="bill_no" readonly />
+										<input type="text" class="form-control invoice-edit-input" name="ref_no" required />
 									</div>
 								</div>
 								<div class="d-flex align-items-center mb-1">

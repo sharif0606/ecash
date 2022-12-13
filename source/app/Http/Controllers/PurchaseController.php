@@ -277,6 +277,7 @@ class PurchaseController extends Controller
             
 			$b = new Purchase;
 			$b->purchase_no 	= $purchase_no;
+			$b->ref_no 			= $request->ref_no;
 			$b->sup_id 			= $request->sup_id;
 			$b->type 			= $request->type;
 			$b->purchase_term 	= $request->purchase_term;
@@ -320,45 +321,98 @@ class PurchaseController extends Controller
 			if(!!$b->save()){
 				foreach($request->products as $id => $details){
 					if($details['product_id'] && $details['qty']){
-					    $stock=new Stock;
-						$stock->companyId 	= company()['companyId'];
-						$stock->branchId 	= branch()['branchId'];
-						$stock->productId=$details['product_id'];
-						$stock->batchId=$details['product_id'].$b->userId.date('dmy').rand(1000,9999);
-						$stock->stock=$details['qty'];
-						$stock->sellPrice=$details['sellPrice'];
-						$stock->buyPrice=$details['buyPrice'];
-						$stock->serialNo=$details['sl_no'];
-						$stock->ram=$details['ram'];
-						$stock->storage=$details['storage'];
-						$stock->color=$details['color'];
-						$stock->imei_1=$details['imei_o'];
-						$stock->imei_2=$details['imei_t'];
+						$imei_o=array();
+						$imei_t=array();
+						if($details['imei_o']){
+							$imei_o=explode(',',$details['imei_o']);
+							$imei_t=explode(',',$details['imei_t']);
+						}
+
+						if(count($imei_o) > 1){
+							foreach($imei_o as $imeikey=>$imei1){
+								$stock				=new Stock;
+								$stock->companyId 	=company()['companyId'];
+								$stock->branchId 	=branch()['branchId'];
+								$stock->productId	=$details['product_id'];
+								$stock->batchId		=$details['product_id'].$b->userId.date('dmy').rand(100,999);
+								$stock->stock		=$details['qty'];
+								$stock->sellPrice	=$details['sellPrice'];
+								$stock->buyPrice	=$details['buyPrice'];
+								$stock->serialNo	=$details['sl_no'];
+								$stock->ram			=$details['ram'];
+								$stock->storage		=$details['storage'];
+								$stock->color		=$details['color'];
+								$stock->imei_1		=$imei1;
+								$stock->imei_2		=$imei_t[$imeikey];
+								
+								//print_r(DB::getQueryLog());die();
+								$stock->save();
+							
+	
+								$bi 			= new PurchaseItem;
+								$bi->companyId 	= company()['companyId'];
+								$bi->branchId 	= branch()['branchId'];
+								$bi->purchase_id= $b->id;
+								$bi->item_id 	= $details['product_id'];
+								$bi->batchId 	= $stock->batchId;
+								$bi->qty 		= $details['qty'];
+								$bi->price 		= $details['buyPrice'];
+								$bi->discount	= $details['discount'];
+								$bi->tax	 	= $details['tax'];
+	
+								$dist=0;
+								if($details['discount']>0)
+									$dist=($details['buyPrice']*($details['discount']/100));
+	
+								$tax=0;
+								if($details['tax']>0)
+									$tax=($details['buyPrice']*($details['tax']/100));
+	
+								$bi->amount	 = (($details['buyPrice']+$dist)-$tax);
+								$bi->save();
+							}
+						}else{
+							$stock				=new Stock;
+							$stock->companyId 	=company()['companyId'];
+							$stock->branchId 	=branch()['branchId'];
+							$stock->productId	=$details['product_id'];
+							$stock->batchId		=$details['product_id'].$b->userId.date('dmy').rand(100,999);
+							$stock->stock		=$details['qty'];
+							$stock->sellPrice	=$details['sellPrice'];
+							$stock->buyPrice	=$details['buyPrice'];
+							$stock->serialNo	=$details['sl_no'];
+							$stock->ram			=$details['ram'];
+							$stock->storage		=$details['storage'];
+							$stock->color		=$details['color'];
+							$stock->imei_1		=$details['imei_o'];
+							$stock->imei_2		=$details['imei_t'];
+							
+							//print_r(DB::getQueryLog());die();
+							$stock->save();
 						
-                        //print_r(DB::getQueryLog());die();
-    					$stock->save();
 
-						$bi 			= new PurchaseItem;
-						$bi->companyId 	= company()['companyId'];
-						$bi->branchId 	= branch()['branchId'];
-						$bi->purchase_id= $b->id;
-						$bi->item_id 	= $details['product_id'];
-						$bi->batchId 	= $stock->batchId;
-						$bi->qty 		= $details['qty'];
-						$bi->price 		= $details['buyPrice'];
-						$bi->discount	= $details['discount'];
-						$bi->tax	 	= $details['tax'];
+							$bi 			= new PurchaseItem;
+							$bi->companyId 	= company()['companyId'];
+							$bi->branchId 	= branch()['branchId'];
+							$bi->purchase_id= $b->id;
+							$bi->item_id 	= $details['product_id'];
+							$bi->batchId 	= $stock->batchId;
+							$bi->qty 		= $details['qty'];
+							$bi->price 		= $details['buyPrice'];
+							$bi->discount	= $details['discount'];
+							$bi->tax	 	= $details['tax'];
 
-						$dist=0;
-						if($details['discount']>0)
-							$dist=($details['buyPrice']*($details['discount']/100));
+							$dist=0;
+							if($details['discount']>0)
+								$dist=($details['buyPrice']*($details['discount']/100));
 
-						$tax=0;
-						if($details['tax']>0)
-							$tax=($details['buyPrice']*($details['tax']/100));
+							$tax=0;
+							if($details['tax']>0)
+								$tax=($details['buyPrice']*($details['tax']/100));
 
-						$bi->amount	 = (($details['buyPrice']+$dist)-$tax);
-						$bi->save();
+							$bi->amount	 = (($details['buyPrice']+$dist)-$tax);
+							$bi->save();
+						}
 					}
 				}
 				DB::commit();
@@ -496,6 +550,7 @@ class PurchaseController extends Controller
         try {
 			DB::beginTransaction();
             $b = Purchase::find(encryptor('decrypt', $request->id));
+			$b->ref_no 			= $request->ref_no;
 			$b->sup_id 			= $request->sup_id;
 			$b->type 			= $request->type;
 			$b->purchase_term 	= $request->purchase_term;
@@ -661,6 +716,7 @@ class PurchaseController extends Controller
             
 			$b = new Purchase;
 			$b->purchase_no 	= $purchase_no;
+			$b->ref_no 			= $request->ref_no;
 			$b->sup_id 			= $request->sup_id;
 			$b->type 			= $request->type;
 			$b->purchase_term 	= $request->purchase_term;
