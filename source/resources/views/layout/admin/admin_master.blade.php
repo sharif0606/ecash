@@ -183,25 +183,43 @@
                 </ul>
             </li>
           @endif
-          
+         
           @if(currentUser() == 'owner' || currentUser() == 'salesmanager' || currentUser() === 'salesman')
             <li class="nav-item {{menuActive(currentUser().'.allCustomer')}} {{menuActive(currentUser().'.addNewCustomerForm')}}  {{menuActive(currentUser().'.editCustomer')}}">
-              <a class="d-flex align-items-center" href="@if(currentUser() === 'owner' || currentUser() === 'salesmanager' || currentUser() === 'salesman') {{route(currentUser().'.allCustomer')}} @endif">
-                <i data-feather="user"></i>
-                <span class="menu-title text-truncate" data-i18n="Customer">Customer</span>
-              </a>
+              <a class="d-flex align-items-center" href="javascript:void(0)"><i data-feather="tv"></i><span class="menu-title text-truncate">Customer</span></a>
+              <ul class="menu-content">
+                  <li class="{{menuActive(currentUser().'.allCustomer')}}">
+                    <a class="d-flex align-items-center" href="@if(currentUser() === 'owner' || currentUser() === 'salesmanager' || currentUser() === 'salesman') {{route(currentUser().'.allCustomer')}} @endif">
+                      <i data-feather="circle"></i><span class="menu-item text-truncate" data-i18n="List">Customer List</span>
+                    </a>
+                  </li>
+                  <li class="{{menuActive(currentUser().'.addNewSupplierForm')}}">
+                    <a class="d-flex align-items-center" href="@if(currentUser() === 'owner' || currentUser() === 'salesmanager' || currentUser() === 'salesman') {{route(currentUser().'.addNewCustomerForm')}} @endif">
+                      <i data-feather="circle"></i><span class="menu-item text-truncate" data-i18n="List">Add New </span>
+                    </a>
+                  </li>
+                </ul>
             </li>
           @endif
 
+         
           @if(currentUser() == 'owner' || currentUser() == 'salesmanager' || currentUser() === 'salesman')
-            <li class="nav-item {{menuActive(currentUser().'.allSupplier')}} {{menuActive(currentUser().'.addNewSupplierForm')}}  {{menuActive(currentUser().'.editSupplier')}}">
-              <a class="d-flex align-items-center" href="@if(currentUser() === 'owner' || currentUser() === 'salesmanager' || currentUser() === 'salesman') {{route(currentUser().'.allSupplier')}} @endif">
-                <i data-feather="user"></i>
-                <span class="menu-title text-truncate" data-i18n="Supplier">Supplier</span>
-              </a>
+            <li class="nav-item {{menuActive(currentUser().'.allSupplier')}} {{menuActive(currentUser().'.addNewSupplierForm')}}  {{menuActive(currentUser().'.editSupplier')}}"><a class="d-flex align-items-center" href="javascript:void(0)"><i data-feather="tv"></i><span class="menu-title text-truncate">Supplier</span></a>
+              <ul class="menu-content">
+                  <li class="{{menuActive(currentUser().'.allSupplier')}}">
+                    <a class="d-flex align-items-center" href="@if(currentUser() === 'owner' || currentUser() === 'salesmanager' || currentUser() === 'salesman') {{route(currentUser().'.allSupplier')}} @endif">
+                      <i data-feather="circle"></i><span class="menu-item text-truncate" data-i18n="List">Supplier List</span>
+                    </a>
+                  </li>
+                  <li class="{{menuActive(currentUser().'.addNewSupplierForm')}}">
+                    <a class="d-flex align-items-center" href="@if(currentUser() === 'owner' || currentUser() === 'salesmanager' || currentUser() === 'salesman') {{route(currentUser().'.addNewSupplierForm')}} @endif">
+                      <i data-feather="circle"></i><span class="menu-item text-truncate" data-i18n="List">Add New </span>
+                    </a>
+                  </li>
+                </ul>
             </li>
           @endif
-          
+
           @if(currentUser() == 'owner' || currentUser() == 'salesmanager')
             <li class="nav-item {{menuActive(currentUser().'.*',3)}}"><a class="d-flex align-items-center" href="javascript:void(0)"><i data-feather="tv"></i><span class="menu-title text-truncate" data-i18n="Employees">Product</span></a>
               <ul class="menu-content">

@@ -55,6 +55,9 @@ class PurchaseController extends Controller
 			$supplier_id=Supplier::where(company())->where('supCode', $request->supplier_contact)->pluck('id');
 			$allPurchase = $allPurchase->where('sup_id', $supplier_id);
 		}
+		if($request->invoice){
+			$allPurchase = $allPurchase->where('ref_no', $request->invoice);
+		}
 		$allPurchase = $allPurchase->orderBy('id', 'DESC')->paginate(25);
         return view('purchase.index', compact('allPurchase'));
     }

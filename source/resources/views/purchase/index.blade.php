@@ -41,6 +41,10 @@
 									<label>Supplier:</label>
 									<input type="text" class="form-control supplier_contact" placeholder="Contact Number" name="supplier_contact"/>
 								</div>
+								<div class="col-lg-3 mb-lg-0 mb-6">
+									<label>Purchase No:</label>
+									<input type="text" class="form-control invoice" placeholder="Purchase No" name="invoice"/>
+								</div>
 								<div class="col-lg-3 pt-2">
 									<button class="btn btn-primary btn-primary-icon" id="kt_search">
 										<span>
@@ -77,7 +81,7 @@
 									<tr role="row">
 										<td>
 											<div class="d-flex align-items-start flex-column text-start">
-												<div><span class="fw-bolder">Purchase No:</span>{{$purchase->purchase_no}}<span></div>
+												<div><span class="fw-bolder">Purchase No:</span>{{$purchase->ref_no}}<span></div>
 												<div><span class="fw-bolder">Invoice Date:</span>{{ date('M d, Y',strtotime($purchase->purchase_date))}}<span></div>
 											</div>
 										</td>
@@ -190,6 +194,7 @@
 			$('.fromdate').val("{{$_GET['fromdate']}}");
 			$('.todate').val("{{$_GET['todate']}}");
 			$('.supplier_contact').val("{{$_GET['supplier_contact']}}");
+			$('.invoice').val("{{$_GET['invoice']}}");
 		@endif
         function changeStatus(bid,status,ans) {
         	
