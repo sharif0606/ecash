@@ -336,6 +336,16 @@
                       <i data-feather="circle"></i><span class="menu-item text-truncate" data-i18n="List">Stock Report</span>
                     </a>
                   </li>
+                  <li class="{{menuActive(currentUser().'.PurchaseReport')}}">
+                    <a class="d-flex align-items-center" href="@if(currentUser() == 'owner' || currentUser() == 'salesmanager') {{route(currentUser().'.PurchaseReport')}} @endif">
+                      <i data-feather="circle"></i><span class="menu-item text-truncate" data-i18n="List">Purchase Report</span>
+                    </a>
+                  </li>
+                  <li class="{{menuActive(currentUser().'.allSalesReport')}}">
+                    <a class="d-flex align-items-center" href="@if(currentUser() == 'owner' || currentUser() == 'salesmanager') {{route(currentUser().'.allSalesReport')}} @endif">
+                      <i data-feather="circle"></i><span class="menu-item text-truncate" data-i18n="List">Sales Report</span>
+                    </a>
+                  </li>
                 </ul>
             </li>
           @endif

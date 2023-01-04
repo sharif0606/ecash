@@ -488,11 +488,8 @@ Route::group(['middleware' => 'isOwner'], function(){
         
         Route::prefix('report')->group(function () {
             Route::get('/stock/batch', 'ReportController@stockBatch')->name('owner.StockBatch');
-            Route::get('/all', 'ReportController@index')->name('owner.allMedicineExpairy');
-            Route::get('/all/purchase/report', 'ReportController@allpurchaseReport')->name('owner.allPurchaseReport');
-            Route::get('/all/sale/report', 'ReportController@allsaleReport')->name('owner.allSaleReport');
-            Route::get('/all/batch/profit', 'ReportController@batchWiseProfit')->name('owner.allbatchWiseProfit');
-            Route::get('/all/sell/report/summary', 'ReportController@allSellReportSummary')->name('owner.allSellReportSummary');
+            Route::get('/purchase', 'ReportController@purchaseReport')->name('owner.PurchaseReport');
+            Route::get('/sales', 'ReportController@salesReport')->name('owner.allSalesReport');
         });
         
         

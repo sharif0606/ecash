@@ -7,7 +7,9 @@ use App\Models\MedicineStock;
 use App\Models\Purchase;
 use App\Models\Bill;
 use App\Models\Supplier;
+use App\Models\Customer;
 use App\Models\Product;
+use App\Models\Category;
 use DB;
 use Carbon\Carbon;
 
@@ -15,12 +17,16 @@ class ReportController extends Controller
 {
 	public function stockBatch(Request $request){
         $allProduct = Product::select("id","name")->orderBy('id', 'DESC')->get();
+        $allCategory = Category::select("id","name")->orderBy('id', 'DESC')->get();
 		$batchWiseReport = DB::table('stocks')->rightJoin('products', 'stocks.productId',  '=','products.id')->select('products.name', 'stocks.batchId','stocks.sellPrice','stocks.buyPrice', 'stocks.stock');
 		
 		$where['stocks.companyId']=company()['companyId'];
-		if(isset($_GET['product']) && $_GET['product'])
-			$where['stocks.productId']=$_GET['product'];
-
+		if(isset($_GET['category']) && $_GET['category']){
+			$catpro=Product::select("id")->where('categoryId',$_GET['category'])->pluck('id');
+			$batchWiseReport = $batchWiseReport->whereIn('stocks.productId',$catpro);
+		}elseif(isset($_GET['product']) && $_GET['product']){
+			$where['stocks.productId']=array($_GET['product']);
+		}
 		if($request->fromdate){
 			$end = $request->todate;
 			$start= $request->fromdate;
@@ -29,9 +35,56 @@ class ReportController extends Controller
 		
 		$batchWiseReport = $batchWiseReport->where($where)->orderBy('products.name')->orderBy('stocks.batchId')->get();
 						
-		return view('report.stock_batch_report', compact('batchWiseReport','allProduct'));
+		return view('report.stock_batch_report', compact('batchWiseReport','allProduct','allCategory'));
     }
 	
+	public function purchaseReport(Request $request){
+		
+        $allSupplier = Supplier::select("id","name")->orderBy('id', 'DESC')->get();
+		$where['companyId']=company()['companyId'];
+		$purchaseReport = Purchase::select('*')->where($where);
+		if($request->fromdate){
+			$end = $request->todate;
+			$start= $request->fromdate;
+			$purchaseReport = $purchaseReport->whereBetween('created_at', [$start, $end]);
+		}
+
+		if(isset($_GET['purchase_term']) && $_GET['purchase_term']){
+			$purchaseReport = $purchaseReport->where('purchase_term',$_GET['purchase_term']);
+		}
+		if(isset($_GET['supplier']) && $_GET['supplier']){
+			$purchaseReport = $purchaseReport->where('sup_id',$_GET['supplier']);
+		}
+		
+		$purchaseReport = $purchaseReport->orderBy('id', 'DESC')->get();
+			
+		return view('report.purchaseReport', compact('purchaseReport','allSupplier'));
+	}
+
+	public function salesReport(Request $request){
+		
+        $allCustomer = Customer::select("id","name")->orderBy('id', 'DESC')->get();
+		$where['companyId']=company()['companyId'];
+		$salesReport = Bill::select('*')->where($where);
+		if($request->fromdate){
+			$end = $request->todate;
+			$start= $request->fromdate;
+			$salesReport = $salesReport->whereBetween('created_at', [$start, $end]);
+		}
+
+		if(isset($_GET['sales_term']) && $_GET['sales_term']){
+			$salesReport = $salesReport->where('sales_term',$_GET['sales_term']);
+		}
+		if(isset($_GET['customer']) && $_GET['customer']){
+			$salesReport = $salesReport->where('customer_id',$_GET['customer']);
+		}
+		
+		$salesReport = $salesReport->orderBy('id', 'DESC')->get();
+			
+		return view('report.salesReport', compact('salesReport','allCustomer'));
+	}
+
+
     public function index(){
 		$where['companyId']=company()['companyId'];
 		
@@ -50,31 +103,7 @@ class ReportController extends Controller
 			->orderBy('id', 'DESC')
 			->paginate(25);
 		
-        return view('report.index', compact('allMedicineExpiry'));
-	}
-	
-	public function allPurchaseReport(){
-		
-		$where['companyId']=company()['companyId'];
-		
-		if(isset($_GET['dateQuery']) && $_GET['dateQuery']){
-			$dateQ 	= explode('-',$_GET['dateQuery']);
-			$start 	=date("Y-m-d",strtotime(str_replace('/', '-', $dateQ[0])));
-			$end 	=date("Y-m-d",strtotime(str_replace('/', '-', $dateQ[1])));
-		}else{
-			$start = date("Y-m-d");
-			$end = date("Y-m-d",strtotime ( '+29 days' , strtotime ( $start ) ));
-		}
-		if(isset($_GET['purchase_term']) && $_GET['purchase_term']){
-			$where['purchase_term']=$_GET['purchase_term'];
-		}
-		
-		$allPurchaseReport = Purchase::select('*')->whereBetween('purchase_date', [$start, $end])
-			->where($where)
-			->orderBy('id', 'DESC')
-			->paginate(25);
-			
-		return view('report.allPurchaseReport', compact('allPurchaseReport'));
+        return view('report.stock_report', compact('allMedicineExpiry'));
 	}
 	
 	public function allSaleReport(){
